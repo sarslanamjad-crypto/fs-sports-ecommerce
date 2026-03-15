@@ -1,0 +1,47 @@
+@extends('backend.layouts.main')
+@section('title', 'Edit StockManagement')
+@section('main-container')
+<div class="container-fluid"><br>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-info"><a class="text-info" href="{{ route('admin.stock-management.index') }}">StockManagement List</a> | Edit StockManagement #{{ $item->id }}</h6>
+        </div>
+        <div class="card-body">
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            <form action="{{ route('admin.stock-management.update', $item->id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                        <div class="form-group mb-3">
+                            <label for="product_id">Product Id</label>
+                            <input type="text" name="product_id" id="product_id" class="form-control" value="{{ $item->product_id }}">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="branch_id">Branch Id</label>
+                            <input type="text" name="branch_id" id="branch_id" class="form-control" value="{{ $item->branch_id }}">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="current_stock_qty">Current Stock Qty</label>
+                            <input type="text" name="current_stock_qty" id="current_stock_qty" class="form-control" value="{{ $item->current_stock_qty }}">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="low_stock_threshold">Low Stock Threshold</label>
+                            <input type="text" name="low_stock_threshold" id="low_stock_threshold" class="form-control" value="{{ $item->low_stock_threshold }}">
+                        </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">Update Record</button>
+                    <a href="{{ route('admin.stock-management.index') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection
