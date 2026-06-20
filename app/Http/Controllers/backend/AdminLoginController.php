@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\Admins;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 
 class AdminLoginController extends Controller
@@ -16,9 +16,20 @@ class AdminLoginController extends Controller
 
     public function onLogin(Request $request)
     {
+        $email = $request->input('email');
+        $password = $request->input('password');
 
-        $admin = Admins::where('email', $request->input('email'))->where('password', $request->input('password'))->first();
+        $admin = Admin::where('email', $email)
+            ->where(function($query) use ($password) {
+                $query->where('password', $password)
+                      ->orWhere('password', md5($password));
+            })
+            ->first();
+
         if ($admin) {
+            if ($admin->status != 1) {
+                return redirect('admin/login')->with('error', 'Your account is disabled.');
+            }
 
             session()->put('id', $admin->id);
             session()->put('first_name', $admin->first_name);

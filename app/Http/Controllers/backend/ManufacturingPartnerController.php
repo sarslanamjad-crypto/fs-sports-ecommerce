@@ -8,9 +8,13 @@ use Illuminate\Http\Request;
 
 class ManufacturingPartnerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = ManufacturingPartner::all();
+        $query = ManufacturingPartner::query();
+        if ($request->filled('search')) {
+            $query->where('organization_name', 'LIKE', '%' . $request->search . '%');
+        }
+        $items = $query->get();
         return view('backend.manufacturing-partner.index', compact('items'));
     }
 

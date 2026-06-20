@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\backend\Team;
+use App\Models\Team;
 use Illuminate\Http\Request;
 
 class TeamMemberController extends Controller
@@ -11,7 +11,12 @@ class TeamMemberController extends Controller
     public function index(Request $request)
     {
         $Name = session('first_name') . " " . session('last_name');
-        return view('backend.team', ['team' => Team::get(), 'Name' => $Name]);
+        $query = Team::query();
+        if ($request->filled('search')) {
+            $query->where('fullname', 'LIKE', '%' . $request->search . '%');
+        }
+        $team = $query->get();
+        return view('backend.team', ['team' => $team, 'Name' => $Name]);
     }
 
 

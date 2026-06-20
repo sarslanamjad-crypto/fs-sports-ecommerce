@@ -33,7 +33,11 @@
                         </div>
                         <div class="form-group mb-3">
                             <label for="order_status">Order Status</label>
-                            <input type="text" name="order_status" id="order_status" class="form-control" value="{{ $item->order_status }}">
+                            <select name="order_status" id="order_status" class="form-control">
+                                <option value="pending" {{ $item->order_status == 'pending' ? 'selected' : '' }}>pending</option>
+                                <option value="confirmed" {{ $item->order_status == 'confirmed' ? 'selected' : '' }}>confirmed</option>
+                                <option value="delivered" {{ $item->order_status == 'delivered' ? 'selected' : '' }}>delivered</option>
+                            </select>
                         </div>
 
                 <div class="form-group mt-4">

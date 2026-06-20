@@ -9,6 +9,7 @@
                         class="fas fa-plus fa-sm text-white-50"></i>Add New Member</a>
                     </div>
                     <div class="card-body">
+                        <x-search-bar placeholder="Search by full name..." />
                         <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
@@ -39,15 +40,43 @@
                                         <img src="/backend/images/team/{{$team->image}}" class="rounded-circle" width="50px" height="50px" alt="Image Not Found">
                                     </td>
                                     <td>
-                                        @if($team->status == 1)
-                                            <a href="">
-                                                <span class="badge badge-success p-2">Active</span>
-                                            </a>
-                                        @else
-                                        <a href="">
-                                            <span class="badge badge-danger p-2">Disabled</span>
-                                        </a>
-                                        @endif
+                                        <div x-data="{ 
+                                            status: {{ $team->status }}, 
+                                            loading: false,
+                                            async toggle() {
+                                                if (this.loading) return;
+                                                this.loading = true;
+                                                try {
+                                                    let res = await fetch('{{ route('admin.status.toggle', ['model' => 'team', 'id' => $team->id]) }}', {
+                                                        method: 'PATCH',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                        }
+                                                    });
+                                                    let data = await res.json();
+                                                    if (data.success) {
+                                                        this.status = data.status;
+                                                    } else {
+                                                        alert(data.error || 'Failed to update status');
+                                                    }
+                                                } catch (e) {
+                                                    console.error(e);
+                                                    alert('An error occurred');
+                                                } finally {
+                                                    this.loading = false;
+                                                }
+                                            }
+                                        }">
+                                            <button type="button" @click="toggle" :disabled="loading" 
+                                                class="btn btn-sm px-3 py-1 font-weight-bold rounded-pill text-white" 
+                                                :class="status == 1 ? 'btn-success' : 'btn-secondary'" 
+                                                :style="status == 1 ? 'box-shadow: 0 4px 10px rgba(40,167,69,0.3);' : 'box-shadow: none;'"
+                                                style="transition: all 0.2s; min-width: 85px;">
+                                                <span x-show="!loading" x-text="status == 1 ? 'Active' : 'Disabled'"></span>
+                                                <span x-show="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                            </button>
+                                        </div>
                                     </td>
                                     <td>
                                         <a href="/admin/team-edit/{{ $team->id }}" class="btn btn-success btn-circle btn-sm">

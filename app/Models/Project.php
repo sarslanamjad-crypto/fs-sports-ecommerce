@@ -22,4 +22,9 @@ class Project extends Model
         'client',
         'status'
     ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
+    }
 }

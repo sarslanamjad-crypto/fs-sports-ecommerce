@@ -1,68 +1,64 @@
-# FS Sports Ecommerce - Enterprise-Level Retail Platform
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
-A comprehensive, scalable e-commerce solution built for real-world business operations. 
-It features advanced order management, inventory tracking, role-based access control, and comprehensive reporting tailored for an active client.
+<p align="center">
+<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-## Core Tech Stack
-- **Framework:** Laravel 8, PHP 7.3/8.0
-- **Database:** MySQL
-- **Packages/Integrations:** Laravel Sanctum (API Authentication), GuzzleHTTP
+## About Laravel
 
-## Key Features
-- **Role-Based Access Control (RBAC):** Granular permissions for Super Admins, Staff, and regular users.
-- **Advanced Inventory Management:** Real-time stock tracking, inventory logging, and multi-branch supplier management.
-- **Complete E-Commerce Flow:** Shopping cart, wishlists, order processing, shipping details, and payment transaction logging.
-- **Comprehensive Reporting:** Finance and sales reports alongside detailed admin audit trails and search logs.
-- **Interactive Features:** Customer quiz competitions and newsletter subscriptions.
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-## Installation Guide
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Follow these steps to set up the project locally:
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-1. **Clone the repository and install dependencies:**
-   ```bash
-   composer install
-   ```
+## Learning Laravel
 
-2. **Set up the environment file:**
-   ```bash
-   cp .env.example .env
-   ```
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-3. **Generate the application key:**
-   ```bash
-   php artisan key:generate
-   ```
+If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-4. **Configure your database in the `.env` file and run migrations:**
-   ```bash
-   php artisan migrate
-   ```
+## Laravel Sponsors
 
-5. **Start the local development server:**
-   ```bash
-   php artisan serve
-   ```
+We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
 
-## System Workflow & Future Updates (FS Sports)
+### Premium Partners
 
-This project (internally known as FS Sports) is designed so that the Backend (Admin Panel) and the Frontend (User Shop) are perfectly synced through a MySQL database.
+- **[Vehikl](https://vehikl.com/)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Cubet Techno Labs](https://cubettech.com)**
+- **[Cyber-Duck](https://cyber-duck.co.uk)**
+- **[Many](https://www.many.co.uk)**
+- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
+- **[DevSquad](https://devsquad.com)**
+- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
+- **[OP.GG](https://op.gg)**
+- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
+- **[Lendio](https://lendio.com)**
 
-### 1. Admin Panel (Backend) System Workflow - **COMPLETED**
-- **Security & Login:** An Admin enters credentials into the Secure Login interface. The system performs Password Hashing and Brute-Force checks before granting access.
-- **Admin CRUD Operations:** Once authorized via Role-Based Route Protection, the Master Admin can access the "Admin Management" feature to create, update, or delete other Admins.
-- **Staff Management:** Admin performs CRUD operations on employee details (Name, Designation, etc.) without granting them panel access.
-- **Branch Initialization:** The Admin can create new physical locations (e.g., Sahiwal Branch, Lahore Branch) in the branches table.
-- **Integrated Branding & Supplies:** Admin manages the "In-House Brand" (FS Bats/Bowls) and the Supplier Management feature.
-- **Dynamic Content Management:** Admin uses the Site Settings & CMS feature to update the "About Us" text, images, and team info. Once saved, this data is instantly pushed to the Frontend.
-- **Category & Product Operations:** Admin performs Dynamic Category Creation and initiates New Product Creation by selecting categories via a Toggle/Dropdown list, entering details, and applying Discount Banners.
-- **Engagement & Innovation:** Admin moderates Video Profiles, manages Quiz Competitions, and monitors Group Purchases.
+## Contributing
 
-### 2. Frontend System Workflow - **IN PROGRESS**
-The customer journey includes intelligent discovery and automated visual cues.
-- **Discovery & Intelligent Search:** Live Search Suggestions provide product names and thumbnails as the user types. Automated "New Arrival" Badges identify products created in the last 7 days.
-- **Interactive Branding:** The "About Us" page dynamically displays the history and mission of FS Sports as configured by the Admin.
-- **The Access Barrier:** Browsing is free, but clicking "Add to Cart" or "Add to Wishlist" triggers a Sign-in/Login popup.
-- **Product Deep-Dive:** Users inspect gear via Product Image Zoom and view Cross-Sell Related Equipment (e.g., pads for a bat).
-- **Innovative Engagement:** Users participate in Quiz Competitions for rewards and upload Video Profiles to build community trust.
-- **Cart & Checkout:** Users manage quantities on the Cart Page. They complete Checkout by choosing between Online Payment or Cash on Delivery.
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+
+## Code of Conduct
+
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+
+## Security Vulnerabilities
+
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+
+## License
+
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

@@ -4,14 +4,18 @@ namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\backend\Projects;
-use SebastianBergmann\CodeCoverage\Report\Xml\Project;
+use App\Models\Project;
 
 class AdminProjectsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('backend.projects', ['project' => Projects::get(), 'Name' => session('first_name') . " " . session('last_name')]);
+        $query = Project::query();
+        if ($request->filled('search')) {
+            $query->where('title', 'LIKE', '%' . $request->search . '%');
+        }
+        $project = $query->get();
+        return view('backend.projects', ['project' => $project, 'Name' => session('first_name') . " " . session('last_name')]);
     }
 
     public function addProject()
@@ -39,7 +43,7 @@ class AdminProjectsController extends Controller
         $ImageName = 'project_' . time() . '.' . $request->image->extension();
         $request->image->move(public_path('backend/images/projects'), $ImageName);
         // dd($ImageName);
-        $projects = new Projects();
+        $projects = new Project();
         $projects->title = $request->title;
         $projects->price = $request->price;
         $projects->details = $request->details;
@@ -56,7 +60,7 @@ class AdminProjectsController extends Controller
     public function editProject($id)
     {
         // dd($id);
-        $project = Projects::where('id', $id)->first();
+        $project = Project::where('id', $id)->first();
         $Name = session('first_name') . " " . session('last_name');
         return view('backend.project-edit', ['project' => $project], ['Name' => $Name] );
 
@@ -77,7 +81,7 @@ class AdminProjectsController extends Controller
             ]
             );
 
-        $team = Projects::where('id', $id)->first();
+        $team = Project::where('id', $id)->first();
         $PROJECT_STATUS = 1;
         if(isset($request->image))
         {
@@ -99,14 +103,14 @@ class AdminProjectsController extends Controller
 
     public function deleteProject($id)
     {
-        $project = Projects::where('id', $id)->first();
+        $project = Project::where('id', $id)->first();
         $project->delete();
-        return back()->withSuccess('Member Record Deleted Successfully'); 
+        return back()->withSuccess('Member Record Deleted Successfully');
     }
 
     // public function showTeamMember($id)
     // {
-    //     $team = Projects::where('id', $id)->first();
+    //     $team = Project::where('id', $id)->first();
     //     return view('backend.team-member-details', ['team' => $team]);
     // }
 

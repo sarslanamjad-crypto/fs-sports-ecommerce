@@ -8,10 +8,20 @@ use Illuminate\Http\Request;
 
 class OrdersTransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = OrdersTransaction::all();
-        return view('backend.orders-transaction.index', compact('items'));
+        $status = $request->query('status');
+        $query = OrdersTransaction::query();
+        if ($status && in_array($status, ['pending', 'confirmed', 'delivered'])) {
+            $query->where('order_status', $status);
+        } else {
+            $status = null;
+        }
+        if ($request->filled('search')) {
+            $query->where('user_id', 'LIKE', '%' . $request->search . '%');
+        }
+        $items = $query->get();
+        return view('backend.orders-transaction.index', compact('items', 'status'));
     }
 
     public function create()

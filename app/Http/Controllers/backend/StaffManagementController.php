@@ -8,9 +8,13 @@ use Illuminate\Http\Request;
 
 class StaffManagementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = StaffManagement::all();
+        $query = StaffManagement::query();
+        if ($request->filled('search')) {
+            $query->where('email', 'LIKE', '%' . $request->search . '%');
+        }
+        $items = $query->get();
         return view('backend.staff-management.index', compact('items'));
     }
 
@@ -21,6 +25,9 @@ class StaffManagementController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'is_active' => 'required|boolean',
+        ]);
         StaffManagement::create($request->all());
         return redirect()->route('admin.staff-management.index')->with('success', 'Created successfully.');
     }
@@ -38,6 +45,9 @@ class StaffManagementController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'is_active' => 'required|boolean',
+        ]);
         $item = StaffManagement::findOrFail($id);
         $item->update($request->all());
         return redirect()->route('admin.staff-management.index')->with('success', 'Updated successfully.');

@@ -11,6 +11,7 @@
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
+            <x-search-bar placeholder="Search by branch name..." />
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
@@ -32,7 +33,45 @@
                                     <td>{{ $item->location }}</td>
                                     <td>{{ $item->city }}</td>
                                     <td>{{ $item->phone }}</td>
-                                    <td>{{ $item->is_active }}</td>
+                                    <td>
+                                        <div x-data="{ 
+                                            status: {{ $item->is_active }}, 
+                                            loading: false,
+                                            async toggle() {
+                                                if (this.loading) return;
+                                                this.loading = true;
+                                                try {
+                                                    let res = await fetch('{{ route('admin.status.toggle', ['model' => 'branch', 'id' => $item->id]) }}', {
+                                                        method: 'PATCH',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                        }
+                                                    });
+                                                    let data = await res.json();
+                                                    if (data.success) {
+                                                        this.status = data.status;
+                                                    } else {
+                                                        alert(data.error || 'Failed to update status');
+                                                    }
+                                                } catch (e) {
+                                                    console.error(e);
+                                                    alert('An error occurred');
+                                                } finally {
+                                                    this.loading = false;
+                                                }
+                                            }
+                                        }">
+                                            <button type="button" @click="toggle" :disabled="loading" 
+                                                class="btn btn-sm px-3 py-1 font-weight-bold rounded-pill text-white" 
+                                                :class="status == 1 ? 'btn-success' : 'btn-secondary'" 
+                                                :style="status == 1 ? 'box-shadow: 0 4px 10px rgba(40,167,69,0.3);' : 'box-shadow: none;'"
+                                                style="transition: all 0.2s; min-width: 85px;">
+                                                <span x-show="!loading" x-text="status == 1 ? 'Active' : 'Disabled'"></span>
+                                                <span x-show="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                    </td>
 
                             <td>
                                 <a href="{{ route('admin.branch.edit', $item->id) }}" class="btn btn-success btn-circle btn-sm" title="Edit"><i class="fas fa-edit"></i></a>

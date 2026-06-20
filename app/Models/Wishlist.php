@@ -10,6 +10,7 @@ class Wishlist extends Model
     use HasFactory;
 
     protected $table = 'wishlists';
+    public $timestamps = false; // Disable timestamps since table uses 'added_at' instead
 
     protected $fillable = [
         'user_id',

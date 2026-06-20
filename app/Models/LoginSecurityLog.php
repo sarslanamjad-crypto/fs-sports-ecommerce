@@ -11,6 +11,8 @@ class LoginSecurityLog extends Model
 
     protected $table = 'login_security_logs';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'user_id',
         'ip_address',

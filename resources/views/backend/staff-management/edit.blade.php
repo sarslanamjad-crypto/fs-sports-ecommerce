@@ -16,33 +16,36 @@
                     </ul>
                 </div>
             @endif
-            <form action="{{ route('admin.staff-management.update', $item->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.staff-management.update', $item->id) }}" method="POST" enctype="multipart/form-data" onsubmit="triggerLoader()">
                 @csrf
                 @method('PUT')
-                        <div class="form-group mb-3">
-                            <label for="staff_name">Staff Name</label>
-                            <input type="text" name="staff_name" id="staff_name" class="form-control" value="{{ $item->staff_name }}">
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="designation">Designation</label>
-                            <input type="text" name="designation" id="designation" class="form-control" value="{{ $item->designation }}">
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="phone">Phone</label>
-                            <input type="text" name="phone" id="phone" class="form-control" value="{{ $item->phone }}">
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="email">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" value="{{ $item->email }}">
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="joining_date">Joining Date</label>
-                            <input type="date" name="joining_date" id="joining_date" class="form-control" value="{{ $item->joining_date }}">
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="is_active">Is Active</label>
-                            <input type="text" name="is_active" id="is_active" class="form-control" value="{{ $item->is_active }}">
-                        </div>
+                <div class="form-group mb-3">
+                    <label for="staff_name">Staff Name</label>
+                    <input type="text" name="staff_name" id="staff_name" class="form-control" value="{{ $item->staff_name }}" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="designation">Designation</label>
+                    <input type="text" name="designation" id="designation" class="form-control" value="{{ $item->designation }}">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="phone">Phone</label>
+                    <input type="text" name="phone" id="phone" class="form-control" value="{{ $item->phone }}">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" class="form-control" value="{{ $item->email }}">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="joining_date">Joining Date</label>
+                    <input type="date" name="joining_date" id="joining_date" class="form-control" value="{{ $item->joining_date }}">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="is_active">Is Active</label>
+                    <select name="is_active" id="is_active" class="w-full rounded-lg bg-slate-900 border border-slate-800 text-white p-2.5 focus:border-orange-500 focus:ring-1 focus:ring-orange-500">
+                        <option value="1" {{ old('is_active', $item->is_active ?? '1') == 1 ? 'selected' : '' }}>Active</option>
+                        <option value="0" {{ old('is_active', $item->is_active ?? '1') == 0 ? 'selected' : '' }}>Disabled</option>
+                    </select>
+                </div>
 
                 <div class="form-group mt-4">
                     <button type="submit" class="btn btn-primary">Update Record</button>

@@ -32,7 +32,11 @@
                         </div>
                         <div class="form-group mb-3">
                             <label for="order_status">Order Status</label>
-                            <input type="text" name="order_status" id="order_status" class="form-control">
+                            <select name="order_status" id="order_status" class="form-control">
+                                <option value="pending" selected>pending</option>
+                                <option value="confirmed">confirmed</option>
+                                <option value="delivered">delivered</option>
+                            </select>
                         </div>
 
                 <div class="form-group mt-4">

@@ -16,7 +16,7 @@
                     </ul>
                 </div>
             @endif
-            <form action="{{ route('admin.products-inventory.update', $item->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.products-inventory.update', $item->id) }}" method="POST" enctype="multipart/form-data" onsubmit="triggerLoader()">
                 @csrf
                 @method('PUT')
                         <div class="form-group mb-3">
@@ -32,8 +32,23 @@
                             <textarea name="description" id="description" class="form-control" rows="4">{{ $item->description }}</textarea>
                         </div>
                         <div class="form-group mb-3">
+                            <label for="image">Product Image</label>
+                            @if($item->image)
+                                <div class="mb-2">
+                                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}" style="max-height: 150px; border-radius: 8px;">
+                                    <p class="text-muted mt-1"><small>Current image: {{ $item->image }}</small></p>
+                                </div>
+                            @endif
+                            <input type="file" name="image" id="image" class="form-control" accept="image/*">
+                            <small class="form-text text-muted">Upload a new image to replace. Leave empty to keep current. Max 2MB.</small>
+                        </div>
+                        <div class="form-group mb-3">
                             <label for="price">Price</label>
                             <input type="text" name="price" id="price" class="form-control" value="{{ $item->price }}">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="discount_percentage">Discount Percentage (%)</label>
+                            <input type="number" name="discount_percentage" id="discount_percentage" class="form-control" value="{{ $item->discount_percentage }}" min="0" max="100" placeholder="e.g. 10">
                         </div>
                         <div class="form-group mb-3">
                             <label for="current_stock">Current Stock</label>
@@ -41,11 +56,17 @@
                         </div>
                         <div class="form-group mb-3">
                             <label for="is_activated">Is Activated</label>
-                            <input type="text" name="is_activated" id="is_activated" class="form-control" value="{{ $item->is_activated }}">
+                            <select name="is_activated" id="is_activated" class="form-control">
+                                <option value="1" {{ $item->is_activated == 1 ? 'selected' : '' }}>Active</option>
+                                <option value="0" {{ $item->is_activated == 0 ? 'selected' : '' }}>Disabled</option>
+                            </select>
                         </div>
                         <div class="form-group mb-3">
                             <label for="is_in_house_brand">Is In House Brand</label>
-                            <input type="text" name="is_in_house_brand" id="is_in_house_brand" class="form-control" value="{{ $item->is_in_house_brand }}">
+                            <select name="is_in_house_brand" id="is_in_house_brand" class="form-control">
+                                <option value="1" {{ $item->is_in_house_brand == 1 ? 'selected' : '' }}>Yes</option>
+                                <option value="0" {{ $item->is_in_house_brand == 0 ? 'selected' : '' }}>No</option>
+                            </select>
                         </div>
 
                 <div class="form-group mt-4">

@@ -8,9 +8,13 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = Category::all();
+        $query = Category::query();
+        if ($request->filled('search')) {
+            $query->where('category_name', 'LIKE', '%' . $request->search . '%');
+        }
+        $items = $query->get();
         return view('backend.category.index', compact('items'));
     }
 
@@ -21,6 +25,9 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'is_active' => 'required|boolean',
+        ]);
         Category::create($request->all());
         return redirect()->route('admin.category.index')->with('success', 'Created successfully.');
     }
@@ -38,6 +45,9 @@ class CategoryController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'is_active' => 'required|boolean',
+        ]);
         $item = Category::findOrFail($id);
         $item->update($request->all());
         return redirect()->route('admin.category.index')->with('success', 'Updated successfully.');

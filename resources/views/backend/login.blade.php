@@ -26,16 +26,84 @@
     <link href="{{ url('backend/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     <style>
         body {
-            background-color: #E9ECF0;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
             -webkit-background-size: cover;
             -moz-background-size: cover;
             background-size: cover;
             -o-background-size: cover;
             height: 100%;
+            min-height: 100vh;
         }
 
         a:hover {
             text-decoration: none;
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+        }
+
+        .card-body {
+            border-top: 4px solid #f97316;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+        }
+
+        .form-control, .form-control-user {
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            padding: 0.6rem 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus, .form-control-user:focus {
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+        }
+
+        .btn-user {
+            border-radius: 8px;
+            transition: all 0.2s;
+            padding: 0.6rem 1rem;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #f97316 0%, #dc2626 100%) !important;
+            border: none !important;
+            color: white !important;
+            box-shadow: 0 4px 6px -1px rgba(249, 115, 22, 0.4);
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(249, 115, 22, 0.6);
+            color: white !important;
+        }
+
+        h1.h5 {
+            color: #1f2937 !important;
+        }
+
+        label {
+            color: #334155;
+            font-weight: 500;
+        }
+
+        .text-info {
+            color: #f97316 !important;
+        }
+
+        a.text-info:hover {
+            color: #dc2626 !important;
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            border-color: #fecaca;
+            color: #991b1b;
+            border-radius: 8px;
         }
     </style>
 </head>

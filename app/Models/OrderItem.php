@@ -18,4 +18,20 @@ class OrderItem extends Model
         'quantity',
         'subtotal'
     ];
+
+    /**
+     * Get the virtual price_at_purchase attribute.
+     */
+    public function getPriceAtPurchaseAttribute()
+    {
+        return $this->unit_price;
+    }
+
+    /**
+     * Relationship to the product.
+     */
+    public function product()
+    {
+        return $this->belongsTo(ProductsInventory::class, 'product_id');
+    }
 }

@@ -1,16 +1,17 @@
 @extends('backend.layouts.main')
-@section('title', 'ShippingDetail Management')
+@section('title', 'Shipping Details')
 @section('main-container')
 <div class="container-fluid"><br>
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-info"><a class="text-info" href="{{url('/admin')}}">Main Menu</a> | ShippingDetail List</h6>
+            <h6 class="m-0 font-weight-bold text-info"><a class="text-info" href="{{url('/admin')}}">Main Menu</a> | Shipping Details List</h6>
             <a href="{{ route('admin.shipping-detail.create') }}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm float-right"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
         </div>
         <div class="card-body">
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
+            <x-search-bar placeholder="Search by Order ID..." />
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>

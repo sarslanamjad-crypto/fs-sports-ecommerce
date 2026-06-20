@@ -7,6 +7,7 @@
                         <a href="{{url('admin/register')}}"><button class="btn btn-info">Add New Admin</button></a></a>
                     </div>
                     <div class="card-body">
+                        <x-search-bar placeholder="Search by admin email..." />
                         <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
@@ -28,17 +29,45 @@
                                     <td>{{$value->last_name}}</td>
                                     <td>{{$value->email}}</td>
                                     <td>{{$value->contact}}</td>
-                                    <td>
-                                        @if($value->status== 1)
-                                            <a href="">
-                                                <span class="badge badge-success p-2">Active</span>
-                                            </a>
-                                        @else
-                                        <a href="">
-                                            <span class="badge badge-danger p-2">Disabled</span>
-                                        </a>
-                                        @endif
-                                    </td>
+                                     <td>
+                                         <div x-data="{ 
+                                             status: {{ $value->status }}, 
+                                             loading: false,
+                                             async toggle() {
+                                                 if (this.loading) return;
+                                                 this.loading = true;
+                                                 try {
+                                                     let res = await fetch('{{ route('admin.status.toggle', ['model' => 'admin', 'id' => $value->id]) }}', {
+                                                         method: 'PATCH',
+                                                         headers: {
+                                                             'Content-Type': 'application/json',
+                                                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                         }
+                                                     });
+                                                     let data = await res.json();
+                                                     if (data.success) {
+                                                         this.status = data.status;
+                                                     } else {
+                                                         alert(data.error || 'Failed to update status');
+                                                     }
+                                                 } catch (e) {
+                                                     console.error(e);
+                                                     alert('An error occurred');
+                                                 } finally {
+                                                     this.loading = false;
+                                                 }
+                                             }
+                                         }">
+                                             <button type="button" @click="toggle" :disabled="loading" 
+                                                 class="btn btn-sm px-3 py-1 font-weight-bold rounded-pill text-white" 
+                                                 :class="status == 1 ? 'btn-success' : 'btn-danger'" 
+                                                 :style="status == 1 ? 'box-shadow: 0 4px 10px rgba(40,167,69,0.3);' : 'box-shadow: 0 4px 10px rgba(220,53,69,0.3);'"
+                                                 style="transition: all 0.2s; min-width: 85px;">
+                                                 <span x-show="!loading" x-text="status == 1 ? 'Active' : 'Disabled'"></span>
+                                                 <span x-show="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                             </button>
+                                         </div>
+                                     </td>
                                     <td>
                                         <a href="{{route('admin.edit', ['id'=> $value->id])}}" class="btn btn-success btn-circle btn-sm">
                                             <i class="fas fa-edit"></i>

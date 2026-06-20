@@ -16,4 +16,9 @@ class Faq extends Model
         'answer',
         'status'
     ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
+    }
 }

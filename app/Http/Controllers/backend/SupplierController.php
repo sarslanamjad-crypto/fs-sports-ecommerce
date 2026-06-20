@@ -8,9 +8,13 @@ use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = Supplier::all();
+        $query = Supplier::query();
+        if ($request->filled('search')) {
+            $query->where('email', 'LIKE', '%' . $request->search . '%');
+        }
+        $items = $query->get();
         return view('backend.supplier.index', compact('items'));
     }
 
@@ -21,6 +25,9 @@ class SupplierController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'is_active' => 'required|boolean',
+        ]);
         Supplier::create($request->all());
         return redirect()->route('admin.supplier.index')->with('success', 'Created successfully.');
     }
@@ -38,6 +45,9 @@ class SupplierController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'is_active' => 'required|boolean',
+        ]);
         $item = Supplier::findOrFail($id);
         $item->update($request->all());
         return redirect()->route('admin.supplier.index')->with('success', 'Updated successfully.');

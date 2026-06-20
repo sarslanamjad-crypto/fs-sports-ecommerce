@@ -16,20 +16,23 @@
                     </ul>
                 </div>
             @endif
-            <form action="{{ route('admin.category.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.category.store') }}" method="POST" enctype="multipart/form-data" onsubmit="triggerLoader()">
                 @csrf
-                        <div class="form-group mb-3">
-                            <label for="category_name">Category Name</label>
-                            <input type="text" name="category_name" id="category_name" class="form-control">
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="slug">Slug</label>
-                            <input type="text" name="slug" id="slug" class="form-control">
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="is_active">Is Active</label>
-                            <input type="text" name="is_active" id="is_active" class="form-control">
-                        </div>
+                <div class="form-group mb-3">
+                    <label for="category_name">Category Name</label>
+                    <input type="text" name="category_name" id="category_name" class="form-control" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="slug">Slug</label>
+                    <input type="text" name="slug" id="slug" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="is_active">Is Active</label>
+                    <select name="is_active" id="is_active" class="w-full rounded-lg bg-slate-900 border border-slate-800 text-white p-2.5 focus:border-orange-500 focus:ring-1 focus:ring-orange-500">
+                        <option value="1" {{ old('is_active', '1') == 1 ? 'selected' : '' }}>Active</option>
+                        <option value="0" {{ old('is_active', '1') == 0 ? 'selected' : '' }}>Disabled</option>
+                    </select>
+                </div>
 
                 <div class="form-group mt-4">
                     <button type="submit" class="btn btn-primary">Save Record</button>

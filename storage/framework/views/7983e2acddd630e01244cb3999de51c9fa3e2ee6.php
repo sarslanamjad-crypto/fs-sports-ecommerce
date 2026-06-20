@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FS86 Sahiwal | Professional Gear In-Depth</title>
+<meta name="description" content="Explore the technical specifications and performance features of our elite sports gear." />
+<link rel="icon" type="image/jpg" href="<?php echo e(asset('assets/logo.jpg')); ?>" />
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = { darkMode:"class", theme:{ extend:{
+      colors:{"surface-bright":"#2c2c2c","tertiary-container":"#b91c1c","on-secondary-container":"#fed7aa","outline":"#767575","error-container":"#9f0519","inverse-primary":"#9a3412","outline-variant":"#484847","secondary-container":"#7c2d12","primary-fixed":"#fdba74","primary-fixed-dim":"#fb923c","on-tertiary-fixed":"#450a0a","tertiary-dim":"#b91c1c","background":"#090909","inverse-surface":"#fcf9f8","surface-container-low":"#131313","surface-container-lowest":"#000000","on-primary-fixed-variant":"#c2410c","on-error":"#7f1d1d","on-primary-container":"#7c2d12","primary":"#f97316","on-tertiary":"#ffffff","secondary-fixed":"#fed7aa","on-background":"#ffffff","secondary-fixed-dim":"#fdba74","inverse-on-surface":"#565555","tertiary-fixed":"#fca5a5","on-secondary":"#ffffff","on-secondary-fixed":"#7c2d12","on-tertiary-fixed-variant":"#991b1b","on-secondary-fixed-variant":"#9a3412","secondary-dim":"#ea580c","on-tertiary-container":"#450a0a","surface-dim":"#090909","on-surface-variant":"#adaaaa","secondary":"#fb923c","surface":"#090909","tertiary-fixed-dim":"#f87171","on-primary-fixed":"#9a3412","surface-tint":"#f97316","on-primary":"#ffffff","primary-dim":"#ea580c","on-error-container":"#fca5a5","surface-container-highest":"#262626","error":"#ef4444","tertiary":"#dc2626","on-surface":"#ffffff","surface-variant":"#262626","error-dim":"#dc2626","primary-container":"#fb923c","surface-container":"#1a1a1a","surface-container-high":"#20201f"},
+      fontFamily:{"headline":["Nunito"],"body":["Nunito"],"label":["Nunito"]},
+      borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"}
+    }}}
+</script>
+
+
+<style>
+  .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
+  body { background-color:#090909; color:#ffffff; font-family:'Nunito',sans-serif; }
+</style>
+</head>
+<body class="bg-background text-on-background selection:bg-primary selection:text-on-primary">
+
+<?php echo $__env->make('frontend.header', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
+<main class="pt-32 pb-20 px-8 max-w-7xl mx-auto min-h-screen">
+  <!-- Breadcrumb -->
+  <div class="mb-8 font-label text-sm text-on-surface-variant">
+    <a href="<?php echo e(route('homepage.html')); ?>" class="hover:text-primary transition-colors">Home</a>
+    <span class="mx-2">/</span>
+    <a href="<?php echo e(route('shop_page.html')); ?>" class="hover:text-primary transition-colors">Shop</a>
+    <span class="mx-2">/</span>
+    <span id="breadcrumb-title" class="text-primary">Loading...</span>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+    <!-- Product Image -->
+    <div class="relative">
+      <div id="product-image-container" class="aspect-square bg-surface-container-low rounded-lg overflow-hidden">
+        <div class="w-full h-full skeleton-pulse"></div>
+      </div>
+    </div>
+
+    <!-- Product Info -->
+    <div class="flex flex-col">
+      <div id="product-badges" class="flex gap-2 mb-4"></div>
+      <h1 id="product-title" class="font-headline text-4xl md:text-5xl font-black italic tracking-tighter mb-4 skeleton-pulse h-12 rounded"></h1>
+      <p id="product-price" class="font-headline text-3xl font-bold text-primary mb-6"></p>
+      <p id="product-description" class="font-body text-on-surface-variant text-lg mb-8 leading-relaxed"></p>
+
+      <div class="flex items-center gap-4 mb-8">
+        <span id="product-stock" class="font-label text-sm text-on-surface-variant"></span>
+      </div>
+
+      <div class="flex gap-4 mb-12">
+        <button id="add-to-cart-btn" onclick="addProductToCart()" class="flex-1 bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)] hover:shadow-[0_6px_15px_rgba(249,115,22,0.6)] py-4 font-headline font-bold rounded-md hover:bg-primary-dim transition-all active:scale-95 text-lg uppercase tracking-wider">
+          ADD TO BAG
+        </button>
+        <button id="add-to-wishlist-btn" onclick="addProductToWishlist()" class="w-14 h-14 border border-outline-variant rounded-md flex items-center justify-center hover:border-primary hover:text-primary transition-all">
+          <span class="material-symbols-outlined">favorite</span>
+        </button>
+      </div>
+
+      <!-- Product Specs -->
+      <div class="border-t border-outline-variant/20 pt-8 space-y-4">
+        <div class="flex justify-between font-label text-sm">
+          <span class="text-on-surface-variant uppercase tracking-widest">Category</span>
+          <span id="product-category" class="text-white"></span>
+        </div>
+        <div class="flex justify-between font-label text-sm">
+          <span class="text-on-surface-variant uppercase tracking-widest">Brand Type</span>
+          <span id="product-brand-type" class="text-white"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews Section -->
+  <section class="mt-32">
+    <h2 class="font-headline text-3xl font-black italic tracking-tighter mb-12">CUSTOMER REVIEWS</h2>
+    <div id="reviews-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="bg-surface-container-low h-32 skeleton-pulse rounded-lg"></div>
+      <div class="bg-surface-container-low h-32 skeleton-pulse rounded-lg"></div>
+    </div>
+    <div id="reviews-empty" class="hidden text-center py-12">
+      <p class="font-body text-on-surface-variant">No reviews yet. Be the first to review this product!</p>
+    </div>
+
+    <!-- Review Form -->
+    <div id="review-form-container" class="mt-12 bg-surface-container-low p-8 rounded-lg max-w-2xl mx-auto">
+      <h3 class="font-headline text-2xl font-bold mb-6 text-center">Write a Review</h3>
+      <div id="review-login-msg" class="hidden text-center text-on-surface-variant mb-4">
+        Please <a href="<?php echo e(route('login_signup.html')); ?>" class="text-primary hover:underline">log in</a> to write a review.
+      </div>
+      <form id="submit-review-form" class="space-y-6 hidden">
+        <div>
+          <label class="block font-label text-sm text-on-surface-variant mb-2">Rating</label>
+          <div class="flex gap-2">
+            <template id="star-template">
+              <span class="material-symbols-outlined text-outline-variant cursor-pointer hover:text-primary transition-colors text-3xl" data-val="1">star</span>
+            </template>
+            <div id="star-rating" class="flex gap-1" data-rating="0">
+              <span class="material-symbols-outlined text-outline-variant cursor-pointer hover:text-primary transition-colors text-3xl" data-val="1">star</span>
+              <span class="material-symbols-outlined text-outline-variant cursor-pointer hover:text-primary transition-colors text-3xl" data-val="2">star</span>
+              <span class="material-symbols-outlined text-outline-variant cursor-pointer hover:text-primary transition-colors text-3xl" data-val="3">star</span>
+              <span class="material-symbols-outlined text-outline-variant cursor-pointer hover:text-primary transition-colors text-3xl" data-val="4">star</span>
+              <span class="material-symbols-outlined text-outline-variant cursor-pointer hover:text-primary transition-colors text-3xl" data-val="5">star</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="block font-label text-sm text-on-surface-variant mb-2">Comment</label>
+          <textarea id="review-comment" class="w-full bg-surface border border-outline-variant rounded px-4 py-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none" rows="4" placeholder="What did you like or dislike?"></textarea>
+        </div>
+        <button type="submit" class="w-full py-4 bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)] hover:shadow-[0_6px_15px_rgba(249,115,22,0.6)] font-headline font-bold rounded-md hover:bg-primary-dim transition-all uppercase tracking-wider">Submit Review</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<?php echo $__env->make('frontend.footer', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<script src="<?php echo e(asset('js/frontend-api.js')); ?>"></script>
+<script>
+  const productId = <?php echo e($productId ?? 'null'); ?>;
+  let currentProduct = null;
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (!productId) return;
+
+    // Load product detail
+    const res = await FrontendAPI.getProduct(productId);
+    if (res.success && res.data) {
+      currentProduct = res.data;
+      const p = res.data;
+
+      document.getElementById('breadcrumb-title').textContent = p.title;
+      document.getElementById('product-title').textContent = p.title;
+      document.getElementById('product-title').classList.remove('skeleton-pulse', 'h-12');
+      const isDiscounted = p.discount_percentage > 0 && p.discounted_price !== null;
+      if (isDiscounted) {
+        document.getElementById('product-price').innerHTML = `
+          <span class="text-primary font-bold">Rs. ${parseFloat(p.discounted_price).toFixed(0)}</span>
+          <span class="text-slate-400 line-through text-lg ml-3 font-normal">Rs. ${parseFloat(p.price).toFixed(0)}</span>
+        `;
+      } else {
+        document.getElementById('product-price').textContent = `Rs. ${parseFloat(p.price).toFixed(0)}`;
+      }
+      
+      document.getElementById('product-description').textContent = p.description || 'No description available.';
+      document.getElementById('product-stock').innerHTML = p.current_stock > 0
+        ? `<span class="text-green-500">● In Stock</span> (${p.current_stock} available)`
+        : `<span class="text-red-500">● Out of Stock</span>`;
+      document.getElementById('product-brand-type').textContent = p.is_in_house_brand == 1 ? 'In-House Brand' : 'Partner Brand';
+      document.getElementById('product-category').textContent = p.category ? p.category.category_name : `Category #${p.category_id}`;
+
+      // Badges
+      const badgesHtml = `
+        <span class="bg-tertiary text-on-tertiary font-label text-xs px-3 py-1 uppercase font-bold">New Arrival</span>
+        ${p.is_in_house_brand == 1 ? '<span class="bg-secondary-container text-secondary font-label text-xs px-3 py-1 uppercase font-bold">In-House Brand</span>' : ''}
+        ${isDiscounted ? `<span class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-label text-xs px-3 py-1 uppercase font-bold">${p.discount_percentage}% OFF</span>` : ''}
+      `;
+      document.getElementById('product-badges').innerHTML = badgesHtml;
+
+      // Image
+      const imgSrc = p.image
+        ? (p.image.startsWith('http') ? p.image : `/storage/${p.image}`)
+        : null;
+      const initials = (p.title || 'FS').substring(0, 2).toUpperCase();
+      if (imgSrc) {
+        document.getElementById('product-image-container').innerHTML = `
+          <img class="w-full h-full object-cover" src="${imgSrc}" alt="${p.title}"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div style="display:none;background:linear-gradient(135deg,#1a1a1a,#0a0a0a);" class="w-full h-full items-center justify-center">
+            <span style="color:#f97316;font-size:5rem;font-weight:900;">${initials}</span>
+          </div>`;
+      } else {
+        document.getElementById('product-image-container').innerHTML = `
+          <div style="background:linear-gradient(135deg,#1a1a1a,#0a0a0a);" class="w-full h-full flex items-center justify-center">
+            <span style="color:#f97316;font-size:5rem;font-weight:900;">${initials}</span>
+          </div>`;
+      }
+    }
+
+    // Load reviews
+    const reviewRes = await FrontendAPI.getReviews(productId);
+    const reviewsGrid = document.getElementById('reviews-grid');
+    const reviewsEmpty = document.getElementById('reviews-empty');
+
+    if (reviewRes.success && reviewRes.data && reviewRes.data.length > 0) {
+      reviewsGrid.innerHTML = reviewRes.data.map(r => `
+        <div class="bg-surface-container-low p-8 rounded-lg">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center font-headline font-bold text-on-primary">${(r.customer_name || 'U')[0].toUpperCase()}</div>
+            <div>
+              <p class="font-headline font-bold">${r.customer_name || 'Anonymous'}</p>
+              <div class="flex gap-1">${'★'.repeat(r.rating || 0)}${'☆'.repeat(5 - (r.rating || 0))}</div>
+            </div>
+          </div>
+          <p class="font-body text-on-surface-variant">${r.comment || ''}</p>
+        </div>
+      `).join('');
+    } else {
+      reviewsGrid.classList.add('hidden');
+      reviewsEmpty.classList.remove('hidden');
+    }
+
+    // Review Session Check
+    const sessionRes = await FrontendAPI.getUserSession();
+    if (sessionRes.success && sessionRes.logged_in) {
+      document.getElementById('submit-review-form').classList.remove('hidden');
+    } else {
+      document.getElementById('review-login-msg').classList.remove('hidden');
+    }
+
+    // Star Rating Logic
+    const stars = document.querySelectorAll('#star-rating span');
+    let currentRating = 0;
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        currentRating = parseInt(star.getAttribute('data-val'));
+        document.getElementById('star-rating').setAttribute('data-rating', currentRating);
+        stars.forEach(s => {
+          if (parseInt(s.getAttribute('data-val')) <= currentRating) {
+            s.classList.remove('text-outline-variant');
+            s.classList.add('text-primary');
+          } else {
+            s.classList.add('text-outline-variant');
+            s.classList.remove('text-primary');
+          }
+        });
+      });
+    });
+
+    // Submit Review Logic
+    document.getElementById('submit-review-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (currentRating === 0) {
+        DOMUtils.toast('Please select a rating.', 'error');
+        return;
+      }
+      const commentInput = document.getElementById('review-comment');
+      const comment = commentInput.value.trim();
+      if (!comment) {
+        DOMUtils.toast('Please enter a comment.', 'error');
+        return;
+      }
+
+      const revRes = await FrontendAPI.submitReview(productId, currentRating, comment);
+      if (revRes.success) {
+        DOMUtils.toast('Review submitted! It will appear after admin approval.');
+        commentInput.value = '';
+        currentRating = 0;
+        stars.forEach(s => {
+          s.classList.add('text-outline-variant');
+          s.classList.remove('text-primary');
+        });
+      } else {
+        DOMUtils.toast(revRes.message || 'Error submitting review.', 'error');
+      }
+    });
+
+  });
+
+  function addProductToCart() {
+    if (productId) addToCartHandler(productId);
+  }
+
+  function addProductToWishlist() {
+    if (productId) addToWishlistHandler(productId);
+  }
+</script>
+</body></html>
+<?php /**PATH D:\CUI Data\6th Semester\Advance Web\AdvanceWebProject\resources\views/frontend/products_details.blade.php ENDPATH**/ ?>

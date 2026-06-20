@@ -16,21 +16,24 @@
                     </ul>
                 </div>
             @endif
-            <form action="{{ route('admin.category.update', $item->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.category.update', $item->id) }}" method="POST" enctype="multipart/form-data" onsubmit="triggerLoader()">
                 @csrf
                 @method('PUT')
-                        <div class="form-group mb-3">
-                            <label for="category_name">Category Name</label>
-                            <input type="text" name="category_name" id="category_name" class="form-control" value="{{ $item->category_name }}">
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="slug">Slug</label>
-                            <input type="text" name="slug" id="slug" class="form-control" value="{{ $item->slug }}">
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="is_active">Is Active</label>
-                            <input type="text" name="is_active" id="is_active" class="form-control" value="{{ $item->is_active }}">
-                        </div>
+                <div class="form-group mb-3">
+                    <label for="category_name">Category Name</label>
+                    <input type="text" name="category_name" id="category_name" class="form-control" value="{{ $item->category_name }}" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="slug">Slug</label>
+                    <input type="text" name="slug" id="slug" class="form-control" value="{{ $item->slug }}">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="is_active">Is Active</label>
+                    <select name="is_active" id="is_active" class="w-full rounded-lg bg-slate-900 border border-slate-800 text-white p-2.5 focus:border-orange-500 focus:ring-1 focus:ring-orange-500">
+                        <option value="1" {{ old('is_active', $item->is_active ?? '1') == 1 ? 'selected' : '' }}>Active</option>
+                        <option value="0" {{ old('is_active', $item->is_active ?? '1') == 0 ? 'selected' : '' }}>Disabled</option>
+                    </select>
+                </div>
 
                 <div class="form-group mt-4">
                     <button type="submit" class="btn btn-primary">Update Record</button>

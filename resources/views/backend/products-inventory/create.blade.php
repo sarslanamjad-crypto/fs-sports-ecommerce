@@ -16,7 +16,7 @@
                     </ul>
                 </div>
             @endif
-            <form action="{{ route('admin.products-inventory.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.products-inventory.store') }}" method="POST" enctype="multipart/form-data" onsubmit="triggerLoader()">
                 @csrf
                         <div class="form-group mb-3">
                             <label for="category_id">Category Id</label>
@@ -31,8 +31,17 @@
                             <textarea name="description" id="description" class="form-control" rows="4"></textarea>
                         </div>
                         <div class="form-group mb-3">
+                            <label for="image">Product Image</label>
+                            <input type="file" name="image" id="image" class="form-control" accept="image/*">
+                            <small class="form-text text-muted">Upload a product image (JPG, PNG, WebP). Max 2MB.</small>
+                        </div>
+                        <div class="form-group mb-3">
                             <label for="price">Price</label>
                             <input type="text" name="price" id="price" class="form-control">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="discount_percentage">Discount Percentage (%)</label>
+                            <input type="number" name="discount_percentage" id="discount_percentage" class="form-control" min="0" max="100" placeholder="e.g. 10">
                         </div>
                         <div class="form-group mb-3">
                             <label for="current_stock">Current Stock</label>
@@ -40,11 +49,17 @@
                         </div>
                         <div class="form-group mb-3">
                             <label for="is_activated">Is Activated</label>
-                            <input type="text" name="is_activated" id="is_activated" class="form-control">
+                            <select name="is_activated" id="is_activated" class="form-control">
+                                <option value="1">Active</option>
+                                <option value="0">Disabled</option>
+                            </select>
                         </div>
                         <div class="form-group mb-3">
                             <label for="is_in_house_brand">Is In House Brand</label>
-                            <input type="text" name="is_in_house_brand" id="is_in_house_brand" class="form-control">
+                            <select name="is_in_house_brand" id="is_in_house_brand" class="form-control">
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
                         </div>
 
                 <div class="form-group mt-4">

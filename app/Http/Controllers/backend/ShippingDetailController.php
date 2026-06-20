@@ -8,9 +8,13 @@ use Illuminate\Http\Request;
 
 class ShippingDetailController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = ShippingDetail::all();
+        $query = ShippingDetail::query();
+        if ($request->filled('search')) {
+            $query->where('order_id', 'LIKE', '%' . $request->search . '%');
+        }
+        $items = $query->get();
         return view('backend.shipping-detail.index', compact('items'));
     }
 

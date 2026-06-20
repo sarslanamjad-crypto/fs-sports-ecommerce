@@ -8,9 +8,13 @@ use Illuminate\Http\Request;
 
 class BranchController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = Branch::all();
+        $query = Branch::query();
+        if ($request->filled('search')) {
+            $query->where('branch_name', 'LIKE', '%' . $request->search . '%');
+        }
+        $items = $query->get();
         return view('backend.branch.index', compact('items'));
     }
 
@@ -21,6 +25,9 @@ class BranchController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'is_active' => 'required|boolean',
+        ]);
         Branch::create($request->all());
         return redirect()->route('admin.branch.index')->with('success', 'Created successfully.');
     }
@@ -38,6 +45,9 @@ class BranchController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'is_active' => 'required|boolean',
+        ]);
         $item = Branch::findOrFail($id);
         $item->update($request->all());
         return redirect()->route('admin.branch.index')->with('success', 'Updated successfully.');

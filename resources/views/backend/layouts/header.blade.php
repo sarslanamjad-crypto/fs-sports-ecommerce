@@ -20,7 +20,9 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="{{ url('backend/css/admin.min.css') }}" rel="stylesheet">
     <script src="{{ url('backend/vendor/sweetalert/sweetalert.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <link href="{{ url('backend/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap4.min.css" rel="stylesheet">
     <style>
         /* Modern Premium Styling Overrides */
         .bg-gradient-info {
@@ -126,6 +128,15 @@
             border-color: #f97316;
             box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
         }
+        /* Fix DataTables select height / cutting off text */
+        .dataTables_length select {
+            height: auto !important;
+            padding: 0.25rem 1.75rem 0.25rem 0.75rem !important;
+            line-height: 1.5 !important;
+            font-size: 0.875rem !important;
+            vertical-align: middle !important;
+            display: inline-block !important;
+        }
         /* Top Navbar active accents */
         .text-info {
             color: #f97316 !important;
@@ -133,11 +144,136 @@
         a.text-info:hover {
             color: #dc2626 !important;
         }
+        /* Sticky Sidebar Polyfill Styles */
+        .sticky {
+            position: -webkit-sticky !important;
+            position: sticky !important;
+        }
+        .top-0 {
+            top: 0 !important;
+        }
+        .h-screen {
+            height: 100vh !important;
+        }
+        .overflow-y-auto {
+            overflow-y: auto !important;
+        }
+        #wrapper {
+            display: flex;
+            min-height: 100vh;
+            overflow: visible !important;
+        }
+        @media (min-width: 768px) {
+            /* Fixed Expanded Width & Sleek Custom Scrollbar for Sidebar */
+            .sidebar {
+                width: 260px !important;
+                min-width: 260px !important;
+                max-width: 260px !important;
+                transition: all 0.2s ease-in-out;
+            }
+            .sidebar.toggled {
+                width: 6.5rem !important;
+                min-width: 6.5rem !important;
+                max-width: 6.5rem !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 110px !important;
+                min-width: 110px !important;
+                max-width: 110px !important;
+                overflow: visible !important;
+                z-index: 1050 !important;
+            }
+            .sidebar .sidebar-brand {
+                height: auto;
+                padding: 0.5rem 0.25rem;
+            }
+            .sidebar .sidebar-brand img {
+                max-height: 40px !important;
+            }
+            .sidebar .nav-item {
+                position: relative;
+            }
+            .sidebar .nav-item .nav-link {
+                text-align: center;
+                padding: 0.75rem 0.25rem;
+                font-size: 0.75rem;
+            }
+            .sidebar .nav-item .nav-link i {
+                margin-right: 0 !important;
+                display: block;
+                margin-bottom: 0.25rem;
+                font-size: 1.1rem;
+            }
+            .sidebar .nav-item .nav-link span {
+                font-size: 0.65rem;
+                display: block;
+                white-space: normal;
+                line-height: 1.2;
+            }
+            .sidebar .sidebar-heading {
+                text-align: center;
+                padding: 0 0.25rem;
+                font-size: 0.6rem;
+                margin-top: 0.5rem;
+            }
+            .sidebar .sidebar-divider {
+                margin: 0.5rem 0 !important;
+            }
+            /* Make collapsed items display as absolute floating panels next to the narrow sidebar */
+            .sidebar .nav-item .collapse {
+                position: absolute !important;
+                left: 110px !important;
+                top: 0 !important;
+                z-index: 9999 !important;
+                width: 180px !important;
+                display: none;
+            }
+            .sidebar .nav-item .collapse.show {
+                display: block !important;
+            }
+            .sidebar .nav-item .collapse .collapse-inner {
+                padding: 0.5rem !important;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+                background-color: #1f2937 !important;
+                border: 1px solid #f97316 !important;
+                border-radius: 8px !important;
+            }
+            .sidebar .nav-item .collapse .collapse-inner .collapse-item {
+                font-size: 0.8rem !important;
+                padding: 0.5rem 0.75rem !important;
+                text-align: left !important;
+                color: #e2e8f0 !important;
+                white-space: nowrap !important;
+                display: block !important;
+                transition: all 0.2s;
+            }
+            .sidebar .nav-item .collapse .collapse-inner .collapse-item:hover {
+                background-color: #f97316 !important;
+                color: #ffffff !important;
+                text-decoration: none !important;
+            }
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
     </style>
 </head>
 <body id="page-top">
     <div id="wrapper">
-        <ul class="navbar-nav bg-gradient-info sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav bg-gradient-info sidebar sidebar-dark accordion sticky top-0 h-screen overflow-y-auto" id="accordionSidebar">
             <br>
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{url('/admin')}}">
                 <div class="sidebar-brand-icon ">
@@ -158,13 +294,12 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAuth" aria-expanded="true" aria-controls="collapseAuth">
                     <i class="fas fa-fw fa-fingerprint"></i>
-                    <span>Authentication & Roles</span>
+                    <span>Authentication</span>
                 </a>
                 <div id="collapseAuth" class="collapse" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{{url('/admin/register')}}">Add an Admin</a>
                         <a class="collapse-item" href="{{url('/admin/admins-list')}}">Admin List</a>
-                        <a class="collapse-item" href="{{ route('admin.roles-permission.index') }}">Roles & Permissions</a>
                     </div>
                 </div>
             </li>
@@ -219,7 +354,6 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{{ route('admin.category.index') }}">Categories</a>
                         <a class="collapse-item" href="{{ route('admin.products-inventory.index') }}">Products & Inventory</a>
-                        <a class="collapse-item" href="{{ route('admin.stock-management.index') }}">Stock Management</a>
                     </div>
                 </div>
             </li>
@@ -234,23 +368,13 @@
                         <a class="collapse-item" href="{{ route('admin.customer.index') }}">Customers</a>
                         <a class="collapse-item" href="{{ route('admin.orders-transaction.index') }}">Orders</a>
                         <a class="collapse-item" href="{{ route('admin.shipping-detail.index') }}">Shipping</a>
+                        <a class="collapse-item" href="{{ route('admin.product-review.index') }}">Product Reviews</a>
                     </div>
                 </div>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEngagement" aria-expanded="true" aria-controls="collapseEngagement">
-                    <i class="fas fa-fw fa-star"></i>
-                    <span>Engagement & Innovation</span>
-                </a>
-                <div id="collapseEngagement" class="collapse" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ route('admin.video-profile.index') }}">Video Profiles</a>
-                        <a class="collapse-item" href="{{ route('admin.quiz-competition.index') }}">Quiz Competitions</a>
-                        <a class="collapse-item" href="{{ route('admin.group-purchase.index') }}">Group Purchases</a>
-                    </div>
-                </div>
-            </li>
+
+
             <hr class="sidebar-divider d-none d-md-block">
             <li class="nav-item">
                 <a class="nav-link" href="{{url('/admin/logout')}}">
@@ -282,11 +406,11 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="admins.php">
+                                <a class="dropdown-item" href="{{ route('admin.edit', ['id' => session('id')]) }}">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
-                                <a class="dropdown-item" href="admin-update-password.php">
+                                <a class="dropdown-item" href="{{ route('admin.change-password') }}">
                                     <i class="fas fa-fingerprint fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Change Password
                                 </a>

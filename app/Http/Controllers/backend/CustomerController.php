@@ -8,9 +8,13 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = Customer::all();
+        $query = Customer::query();
+        if ($request->filled('search')) {
+            $query->where('email', 'LIKE', '%' . $request->search . '%');
+        }
+        $items = $query->get();
         return view('backend.customer.index', compact('items'));
     }
 

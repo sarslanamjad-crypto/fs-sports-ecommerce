@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('shop_name')->nullable();
             $table->string('logo')->nullable();
-            $table->string('about_us_title')->nullable();
+            $table->text('about_us_title')->nullable();
             $table->text('about_us_content')->nullable();
             $table->text('store_location_data')->nullable();
             $table->text('rent_info')->nullable();

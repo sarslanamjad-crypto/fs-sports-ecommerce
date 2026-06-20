@@ -19,4 +19,6 @@ class ProductReview extends Model
         'comment',
         'is_visible'
     ];
+
+    public $timestamps = false;
 }

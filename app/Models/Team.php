@@ -24,4 +24,9 @@ class Team extends Model
         'image',
         'status'
     ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
+    }
 }
