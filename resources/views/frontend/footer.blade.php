@@ -36,8 +36,14 @@
       </a>
     </div>
   </div>
-  <div class="max-w-7xl mx-auto px-8 mt-20 pt-8 border-t border-white/5 text-center">
-    <p class="text-gray-500 opacity-80">© 2024 FS Sports. Engineered for Performance.</p>
+  <div class="max-w-7xl mx-auto px-8 mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="order-2 md:order-1">
+      <a href="/admin/login" class="text-gray-600 hover:text-[#f97316] transition-colors flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider">
+        <span class="material-symbols-outlined text-base">admin_panel_settings</span>
+        Admin Panel
+      </a>
+    </div>
+    <p class="text-gray-500 opacity-80 order-1 md:order-2">© 2024 FS Sports. Engineered for Performance.</p>
   </div>
 </footer>
 
