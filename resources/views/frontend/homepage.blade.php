@@ -107,7 +107,7 @@
     <section class="relative h-[921px] w-full overflow-hidden flex items-center">
       <div class="absolute inset-0 z-0">
         <img alt="High Performance Athlete" class="w-full h-full object-cover grayscale brightness-50 contrast-125"
-          src="{{ asset('assets/image/hero.avif') }}" />
+          src="{{ asset('assets/image/hero.jpeg') }}" />
         <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
       </div>
       <div class="relative z-10 max-w-7xl mx-auto px-8 w-full">
