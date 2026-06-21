@@ -282,6 +282,7 @@
 
   <!-- Footer -->
   @include('frontend.footer')
+  <script src="{{ asset('js/frontend-api.js') }}"></script>
 </body>
 
 </html>
