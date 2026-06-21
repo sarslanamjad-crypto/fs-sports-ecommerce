@@ -32,7 +32,8 @@ class ProductsInventoryController extends Controller
         $data = $request->except('image');
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
+            // Upload directly to Cloudinary disk
+            $data['image'] = $request->file('image')->store('products', 'cloudinary');
         }
 
         ProductsInventory::create($data);
@@ -56,11 +57,11 @@ class ProductsInventoryController extends Controller
         $data = $request->except('image');
 
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($item->image && Storage::disk('public')->exists($item->image)) {
-                Storage::disk('public')->delete($item->image);
-            }
-            $data['image'] = $request->file('image')->store('products', 'public');
+            // Delete old image if it exists
+            $this->deleteImage($item->image);
+
+            // Upload directly to Cloudinary disk
+            $data['image'] = $request->file('image')->store('products', 'cloudinary');
         }
 
         $item->update($data);
@@ -71,10 +72,27 @@ class ProductsInventoryController extends Controller
     {
         $item = ProductsInventory::findOrFail($id);
         // Delete image file
-        if ($item->image && Storage::disk('public')->exists($item->image)) {
-            Storage::disk('public')->delete($item->image);
-        }
+        $this->deleteImage($item->image);
         $item->delete();
         return redirect()->route('admin.products-inventory.index')->with('success', 'Deleted successfully.');
+    }
+
+    private function deleteImage($imagePath)
+    {
+        if (!$imagePath) {
+            return;
+        }
+
+        if (str_starts_with($imagePath, 'http://') || str_starts_with($imagePath, 'https://')) {
+            try {
+                Storage::disk('cloudinary')->delete($imagePath);
+            } catch (\Exception $e) {
+                // Ignore errors during deletion
+            }
+        } else {
+            if (Storage::disk('public')->exists($imagePath)) {
+                Storage::disk('public')->delete($imagePath);
+            }
+        }
     }
 }
