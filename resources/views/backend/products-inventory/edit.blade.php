@@ -35,7 +35,7 @@
                             <label for="image">Product Image</label>
                             @if($item->image)
                                 <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}" style="max-height: 150px; border-radius: 8px;">
+                                    <img @if(Str::startsWith($item->image, ['http://', 'https://'])) src="{{ $item->image }}" @else src="{{ asset('storage/' . $item->image) }}" @endif alt="{{ $item->title }}" style="max-height: 150px; border-radius: 8px;">
                                     <p class="text-muted mt-1"><small>Current image: {{ $item->image }}</small></p>
                                 </div>
                             @endif
