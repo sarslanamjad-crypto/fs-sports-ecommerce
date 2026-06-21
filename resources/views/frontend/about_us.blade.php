@@ -125,8 +125,7 @@
                     BEYOND THE <br /> <span class="text-primary">EQUIPMENT.</span>
                 </h1>
                 <p id="about-hero-text" class="mt-8 max-w-xl text-on-surface-variant font-body text-lg leading-relaxed">
-                    FS Sports isn't just a retailer. We are the kinetic link between human potential and elite
-                    engineering.
+                    {{ $settings->about_us_title ?? "FS Sports isn't just a retailer. We are the kinetic link between human potential and elite engineering." }}
                 </p>
             </div>
         </section>
@@ -140,9 +139,7 @@
                         Our Launch</div>
                     <h2 class="font-headline text-4xl font-bold tracking-tight text-white">Built by athletes, for athletes.</h2>
                     <p id="about-content" class="font-body text-on-surface-variant leading-relaxed">
-                        Started in 2014 by a group of materials scientists and retired pro-athletes, FS Sports began
-                        with a single mission: to eliminate the gap between professional-grade gear and the aspiring
-                        athlete.
+                        {{ $settings->about_us_content ?? "Started in 2014 by a group of materials scientists and retired pro-athletes, FS Sports began with a single mission: to eliminate the gap between professional-grade gear and the aspiring athlete." }}
                     </p>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-surface-container-low p-6 rounded-xl">
@@ -188,10 +185,60 @@
                     </div>
                 </div>
                 <div id="team-grid" class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <!-- Skeleton Loading -->
-                    <div class="md:col-span-2 bg-surface-container-high h-96 skeleton-pulse rounded-xl"></div>
-                    <div class="bg-surface-container-high h-64 skeleton-pulse rounded-xl"></div>
-                    <div class="bg-surface-container-high h-64 skeleton-pulse rounded-xl"></div>
+                    @forelse ($team as $index => $member)
+                        @php
+                            $imgSrc = $member->image ? 
+                                (str_starts_with($member->image, 'http') ? $member->image : asset('backend/images/team/' . $member->image)) : 
+                                'https://via.placeholder.com/400x400/1a1a1a/f97316?text=' . urlencode($member->fullname);
+                        @endphp
+                        
+                        @if ($index === 0)
+                            {{-- Featured large card --}}
+                            <div class="md:col-span-2 bg-surface-container-high relative overflow-hidden group rounded-xl">
+                                <div class="h-96 w-full">
+                                    <img class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
+                                         src="{{ $imgSrc }}" alt="{{ $member->fullname }}"
+                                         onerror="this.onerror=null;this.src='https://via.placeholder.com/400x400/1a1a1a/f97316?text=' + encodeURIComponent('{{ addslashes($member->fullname) }}');" />
+                                </div>
+                                <div class="absolute bottom-0 left-0 p-8 w-full bg-gradient-to-t from-black to-transparent">
+                                    <div class="text-white font-headline text-2xl font-bold">{{ $member->fullname }}</div>
+                                    <div class="text-primary font-label text-sm uppercase">{{ $member->designation }}</div>
+                                    @if ($member->shortintro)
+                                        <p class="text-on-surface-variant text-sm mt-2">{{ $member->shortintro }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                        @else
+                            {{-- Standard cards --}}
+                            <div class="md:col-span-1 bg-surface-container-high overflow-hidden group rounded-xl">
+                                <div class="h-64 w-full">
+                                    <img class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
+                                         src="{{ $imgSrc }}" alt="{{ $member->fullname }}"
+                                         onerror="this.onerror=null;this.src='https://via.placeholder.com/400x400/1a1a1a/f97316?text=' + encodeURIComponent('{{ addslashes($member->fullname) }}');" />
+                                </div>
+                                <div class="p-6">
+                                    <div class="text-white font-headline text-xl font-bold">{{ $member->fullname }}</div>
+                                    <div class="text-primary font-label text-sm uppercase">{{ $member->designation }}</div>
+                                    <div class="flex gap-2 mt-3">
+                                        @if ($member->linkedin)
+                                            <a href="{{ $member->linkedin }}" class="text-on-surface-variant hover:text-primary text-xs" target="_blank">LinkedIn</a>
+                                        @endif
+                                        @if ($member->insta)
+                                            <a href="{{ $member->insta }}" class="text-on-surface-variant hover:text-primary text-xs" target="_blank">Instagram</a>
+                                        @endif
+                                        @if ($member->twitter)
+                                            <a href="{{ $member->twitter }}" class="text-on-surface-variant hover:text-primary text-xs" target="_blank">Twitter</a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @empty
+                        <div class="md:col-span-4 text-center py-16">
+                            <span class="material-symbols-outlined text-5xl text-outline-variant mb-4">groups</span>
+                            <p class="font-headline text-lg text-on-surface-variant">Team members coming soon!</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </section>
@@ -217,88 +264,6 @@
 
     @include('frontend.footer')
     <script src="{{ asset('js/frontend-api.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            // ─── Load Site Settings ─────────────────────────────────
-            try {
-                const settingsRes = await FrontendAPI.getSiteSettings();
-                if (settingsRes.success && settingsRes.data) {
-                    const s = settingsRes.data;
-                    if (s.about_us_content) {
-                        document.getElementById('about-content').textContent = s.about_us_content;
-                    }
-                    if (s.about_us_title) {
-                        document.getElementById('about-hero-text').textContent = s.about_us_title;
-                    }
-                }
-            } catch (e) {}
-
-            // ─── Load Team Members ──────────────────────────────────
-            try {
-                const teamRes = await FrontendAPI.getTeam();
-                if (teamRes.success && teamRes.data && teamRes.data.length > 0) {
-                    const teamGrid = document.getElementById('team-grid');
-                    let html = '';
-
-                    teamRes.data.forEach((member, i) => {
-                        const imgSrc = member.image ?
-                            (member.image.startsWith('http') ? member.image :
-                                `/backend/images/team/${member.image}`) :
-                            'https://via.placeholder.com/400x400/1a1a1a/f97316?text=' +
-                            encodeURIComponent(member.fullname);
-
-                        if (i === 0) {
-                            // Featured large card
-                            html += `
-            <div class="md:col-span-2 bg-surface-container-high relative overflow-hidden group rounded-xl">
-              <div class="h-96 w-full">
-                <img class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
-                     src="${imgSrc}" alt="${member.fullname}"
-                     onerror="this.onerror=null;this.src='https://via.placeholder.com/400x400/1a1a1a/f97316?text=' + encodeURIComponent('${member.fullname}');" />
-              </div>
-              <div class="absolute bottom-0 left-0 p-8 w-full bg-gradient-to-t from-black to-transparent">
-                <div class="text-white font-headline text-2xl font-bold">${member.fullname}</div>
-                <div class="text-primary font-label text-sm uppercase">${member.designation || ''}</div>
-                ${member.shortintro ? `<p class="text-on-surface-variant text-sm mt-2">${member.shortintro}</p>` : ''}
-              </div>
-            </div>`;
-                        } else {
-                            // Standard cards
-                            html += `
-            <div class="md:col-span-1 bg-surface-container-high overflow-hidden group rounded-xl">
-              <div class="h-64 w-full">
-                <img class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
-                     src="${imgSrc}" alt="${member.fullname}"
-                     onerror="this.onerror=null;this.src='https://via.placeholder.com/400x400/1a1a1a/f97316?text=' + encodeURIComponent('${member.fullname}');" />
-              </div>
-              <div class="p-6">
-                <div class="text-white font-headline text-xl font-bold">${member.fullname}</div>
-                <div class="text-primary font-label text-sm uppercase">${member.designation || ''}</div>
-                <div class="flex gap-2 mt-3">
-                  ${member.linkedin ? `<a href="${member.linkedin}" class="text-on-surface-variant hover:text-primary text-xs" target="_blank">LinkedIn</a>` : ''}
-                  ${member.insta ? `<a href="${member.insta}" class="text-on-surface-variant hover:text-primary text-xs" target="_blank">Instagram</a>` : ''}
-                  ${member.twitter ? `<a href="${member.twitter}" class="text-on-surface-variant hover:text-primary text-xs" target="_blank">Twitter</a>` : ''}
-                </div>
-              </div>
-            </div>`;
-                        }
-                    });
-
-                    teamGrid.innerHTML = html;
-                } else {
-                    document.getElementById('team-grid').innerHTML = `
-          <div class="md:col-span-4 text-center py-16">
-            <span class="material-symbols-outlined text-5xl text-outline-variant mb-4">groups</span>
-            <p class="font-headline text-lg text-on-surface-variant">Team members coming soon!</p>
-          </div>`;
-                }
-            } catch (e) {
-                console.error('Failed to load team', e);
-            }
-        });
-
-
-    </script>
 </body>
 
 </html>

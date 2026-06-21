@@ -6,6 +6,8 @@ use App\Models\Branch;
 use App\Models\Category;
 use App\Models\ProductsInventory;
 use App\Models\ProductReview;
+use App\Models\SiteSetting;
+use App\Models\Team;
 use Illuminate\Http\Request;
 
 class FrontendController extends Controller
@@ -73,5 +75,16 @@ class FrontendController extends Controller
             ->withQueryString();
 
         return view('frontend.shop_page', compact('categories', 'products'));
+    }
+
+    public function aboutUs()
+    {
+        // Fetch the site settings (SiteSetting::first())
+        $settings = SiteSetting::first();
+
+        // Fetch active team members (Team::where('status', 1)->get())
+        $team = Team::where('status', 1)->get();
+
+        return view('frontend.about_us', compact('settings', 'team'));
     }
 }

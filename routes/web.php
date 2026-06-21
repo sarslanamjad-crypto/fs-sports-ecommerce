@@ -53,7 +53,7 @@ use App\Http\Controllers\Api\StripePaymentController;
 
 Route::get('/', fn() => view('frontend.homepage'))->name('homepage.html');
 Route::get('/shop', [FrontendController::class, 'shop'])->name('shop_page.html');
-Route::get('/about', fn() => view('frontend.about_us'))->name('about_us.html');
+Route::get('/about', [FrontendController::class, 'aboutUs'])->name('about_us.html');
 Route::get('/stores', [FrontendController::class, 'storeLocator'])->name('store_locator.html');
 
 
