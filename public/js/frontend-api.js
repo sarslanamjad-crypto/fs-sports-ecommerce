@@ -34,8 +34,12 @@ const FrontendAPI = {
                 data = await response.json();
             } catch (e) {}
 
+            if (data && typeof data === 'object') {
+                data._status = response.status;
+            }
+
             if (response.status === 401) {
-                return { success: false, message: 'Please login first.', status: 401 };
+                return { success: false, message: 'Please login first.', status: 401, _status: 401 };
             }
 
             if (!response.ok) {
@@ -378,22 +382,30 @@ function redirectToLogin() {
 
 async function addToCartHandler(productId) {
     const res = await FrontendAPI.addToCart(productId);
-    if (res.status === 401 || (!res.success && res.message === 'Please login first.')) {
+    if (res.status === 401 || res._status === 401 || (!res.success && res.message === 'Please login first.')) {
         DOMUtils.toast('Please login to add items to cart.', 'error');
         setTimeout(redirectToLogin, 1500);
         return;
     }
-    DOMUtils.toast(res.message || 'Added to cart!', res.success ? 'success' : 'error');
+    if (res._status === 200 && res.success) {
+        DOMUtils.toast(res.message || 'Added to cart!', 'success');
+    } else {
+        DOMUtils.toast(res.message || 'Failed to add item.', 'error');
+    }
 }
 
 async function addToWishlistHandler(productId) {
     const res = await FrontendAPI.addToWishlist(productId);
-    if (res.status === 401 || (!res.success && res.message === 'Please login first.')) {
+    if (res.status === 401 || res._status === 401 || (!res.success && res.message === 'Please login first.')) {
         DOMUtils.toast('Please login to add items to wishlist.', 'error');
         setTimeout(redirectToLogin, 1500);
         return;
     }
-    DOMUtils.toast(res.message || 'Added to wishlist!', res.success ? 'success' : 'error');
+    if (res._status === 200 && res.success) {
+        DOMUtils.toast(res.message || 'Added to wishlist!', 'success');
+    } else {
+        DOMUtils.toast(res.message || 'Failed to add item.', 'error');
+    }
 }
 
 async function removeWishlistHandler(wishlistId) {
