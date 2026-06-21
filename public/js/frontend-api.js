@@ -39,7 +39,9 @@ const FrontendAPI = {
             }
 
             if (response.status === 401) {
-                return { success: false, message: 'Please login first.', status: 401, _status: 401 };
+                const error = new Error('Unauthorized');
+                error.response = { status: 401 };
+                throw error;
             }
 
             if (!response.ok) {
@@ -381,30 +383,38 @@ function redirectToLogin() {
 }
 
 async function addToCartHandler(productId) {
-    const res = await FrontendAPI.addToCart(productId);
-    if (res.status === 401 || res._status === 401 || (!res.success && res.message === 'Please login first.')) {
-        DOMUtils.toast('Please login first', 'error');
-        redirectToLogin();
-        return;
-    }
-    if (res._status === 200 && res.success) {
-        DOMUtils.toast(res.message || 'Added to cart!', 'success');
-    } else {
-        DOMUtils.toast(res.message || 'Failed to add item.', 'error');
+    try {
+        const res = await FrontendAPI.addToCart(productId);
+        if (res._status === 200 && res.success) {
+            DOMUtils.toast(res.message || 'Added to cart!', 'success');
+        } else {
+            DOMUtils.toast(res.message || 'Failed to add item.', 'error');
+        }
+    } catch (error) {
+        if (error.response && error.response.status === 401) {
+            DOMUtils.toast('Please login first', 'error');
+            localStorage.setItem('fs_login_redirect', window.location.href);
+            window.location.href = '/login';
+            return;
+        }
     }
 }
 
 async function addToWishlistHandler(productId) {
-    const res = await FrontendAPI.addToWishlist(productId);
-    if (res.status === 401 || res._status === 401 || (!res.success && res.message === 'Please login first.')) {
-        DOMUtils.toast('Please login first', 'error');
-        redirectToLogin();
-        return;
-    }
-    if (res._status === 200 && res.success) {
-        DOMUtils.toast(res.message || 'Added to wishlist!', 'success');
-    } else {
-        DOMUtils.toast(res.message || 'Failed to add item.', 'error');
+    try {
+        const res = await FrontendAPI.addToWishlist(productId);
+        if (res._status === 200 && res.success) {
+            DOMUtils.toast(res.message || 'Added to wishlist!', 'success');
+        } else {
+            DOMUtils.toast(res.message || 'Failed to add item.', 'error');
+        }
+    } catch (error) {
+        if (error.response && error.response.status === 401) {
+            DOMUtils.toast('Please login first', 'error');
+            localStorage.setItem('fs_login_redirect', window.location.href);
+            window.location.href = '/login';
+            return;
+        }
     }
 }
 
