@@ -117,12 +117,12 @@ Route::prefix('api/frontend')->group(function () {
 
     // Wishlist (session-protected)
     Route::get('/wishlist', [FrontendApiController::class, 'getWishlist']);
-    Route::post('/wishlist', [FrontendApiController::class, 'addToWishlist']);
+    Route::post('/wishlist', [FrontendApiController::class, 'addToWishlist'])->middleware('auth');
     Route::delete('/wishlist/{id}', [FrontendApiController::class, 'removeFromWishlist']);
 
     // Cart (session-protected)
     Route::get('/cart', [FrontendApiController::class, 'getCart']);
-    Route::post('/cart', [FrontendApiController::class, 'addToCart']);
+    Route::post('/cart', [FrontendApiController::class, 'addToCart'])->middleware('auth');
     Route::delete('/cart/{id}', [FrontendApiController::class, 'removeFromCart']);
 
     // Checkout (session-protected)

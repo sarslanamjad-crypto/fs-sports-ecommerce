@@ -456,6 +456,7 @@ class FrontendApiController extends Controller
     {
         $user = $this->getValidatedUser();
         if (!$user) {
+            $request->session()->flash('error', 'Please login to continue.');
             return response()->json([
                 'success' => false,
                 'message' => 'Please login first.'
@@ -565,6 +566,7 @@ class FrontendApiController extends Controller
     {
         $user = $this->getValidatedUser();
         if (!$user) {
+            $request->session()->flash('error', 'Please login to continue.');
             return response()->json([
                 'success' => false,
                 'message' => 'Please login first.'

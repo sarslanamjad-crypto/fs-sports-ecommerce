@@ -155,4 +155,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 </script>
+
+@if (session('error'))
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  DOMUtils.toast("{{ session('error') }}", 'error');
+});
+</script>
+@endif
 </body></html>

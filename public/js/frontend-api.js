@@ -29,7 +29,14 @@ const FrontendAPI = {
             }
 
             const response = await fetch(url, config);
-            const data = await response.json();
+            let data = {};
+            try {
+                data = await response.json();
+            } catch (e) {}
+
+            if (response.status === 401) {
+                return { success: false, message: 'Please login first.', status: 401 };
+            }
 
             if (!response.ok) {
                 console.error(`API Error [${endpoint}]:`, data);
@@ -371,7 +378,7 @@ function redirectToLogin() {
 
 async function addToCartHandler(productId) {
     const res = await FrontendAPI.addToCart(productId);
-    if (!res.success && res.message === 'Please login first.') {
+    if (res.status === 401 || (!res.success && res.message === 'Please login first.')) {
         DOMUtils.toast('Please login to add items to cart.', 'error');
         setTimeout(redirectToLogin, 1500);
         return;
@@ -381,7 +388,7 @@ async function addToCartHandler(productId) {
 
 async function addToWishlistHandler(productId) {
     const res = await FrontendAPI.addToWishlist(productId);
-    if (!res.success && res.message === 'Please login first.') {
+    if (res.status === 401 || (!res.success && res.message === 'Please login first.')) {
         DOMUtils.toast('Please login to add items to wishlist.', 'error');
         setTimeout(redirectToLogin, 1500);
         return;
