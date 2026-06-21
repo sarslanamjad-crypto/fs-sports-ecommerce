@@ -43,7 +43,7 @@ use App\Http\Controllers\Backend\TeamController;
 
 use App\Http\Controllers\Backend\WishlistController;
 use App\Http\Controllers\Backend\DashboardStatsController;
-
+use App\Http\Controllers\FrontendController;
 
 use App\Http\Controllers\Api\FrontendApiController;
 use App\Http\Controllers\Api\StripePaymentController;
@@ -54,7 +54,7 @@ use App\Http\Controllers\Api\StripePaymentController;
 Route::get('/', fn() => view('frontend.homepage'))->name('homepage.html');
 Route::get('/shop', fn() => view('frontend.shop_page'))->name('shop_page.html');
 Route::get('/about', fn() => view('frontend.about_us'))->name('about_us.html');
-Route::get('/stores', fn() => view('frontend.store_locator'))->name('store_locator.html');
+Route::get('/stores', [FrontendController::class, 'storeLocator'])->name('store_locator.html');
 
 
 Route::get('/wishlist', fn() => view('frontend.wishlist'))->name('wishlist.html');

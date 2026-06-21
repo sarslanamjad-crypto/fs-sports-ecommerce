@@ -35,53 +35,43 @@
   <p class="max-w-xl text-on-surface-variant font-body text-lg">Find our retail locations near you. Experience our gear firsthand.</p>
 </div>
 
-<div id="branches-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-  <div class="bg-surface-container-low h-48 skeleton-pulse rounded-lg"></div>
-  <div class="bg-surface-container-low h-48 skeleton-pulse rounded-lg"></div>
-  <div class="bg-surface-container-low h-48 skeleton-pulse rounded-lg"></div>
-</div>
-
-<div id="branches-empty" class="hidden text-center py-20">
+@if ($branches->isEmpty())
+<div id="branches-empty" class="text-center py-20">
   <span class="material-symbols-outlined text-6xl text-outline-variant mb-4">location_off</span>
   <p class="font-headline text-xl text-on-surface-variant">No store locations available yet.</p>
 </div>
+@else
+<div id="branches-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  @foreach ($branches as $branch)
+  <div class="bg-surface-container-low p-8 rounded-lg border border-outline-variant/10 hover:border-primary/30 transition-all group">
+    <div class="flex items-start gap-4 mb-4">
+      <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">storefront</span>
+      <div>
+        <h3 class="font-headline text-xl font-bold text-white group-hover:text-primary transition-colors">{{ $branch->branch_name }}</h3>
+        <p class="font-label text-primary text-xs uppercase tracking-widest mt-1">{{ $branch->city }}</p>
+      </div>
+    </div>
+    <p class="font-body text-on-surface-variant text-sm mb-4">{{ $branch->location }}</p>
+    @if ($branch->phone)
+    <div class="flex items-center gap-2 text-on-surface-variant text-sm">
+      <span class="material-symbols-outlined text-sm">call</span>
+      {{ $branch->phone }}
+    </div>
+    @endif
+    @if ($branch->latitude && $branch->longitude)
+      <div class="mt-4 pt-4 border-t border-outline-variant/10">
+        <a href="https://www.google.com/maps/dir/?api=1&destination={{ $branch->latitude }},{{ $branch->longitude }}" 
+           target="_blank" 
+           class="inline-flex items-center space-x-2 text-sm text-primary hover:underline font-bold">
+            <span>📍 Open in Maps</span>
+        </a>
+      </div>
+    @endif
+  </div>
+  @endforeach
+</div>
+@endif
 </main>
 
 @include('frontend.footer')
-<script src="{{ asset('js/frontend-api.js') }}"></script>
-<script>
-document.addEventListener('DOMContentLoaded', async () => {
-  const res = await FrontendAPI.getBranches();
-  const grid = document.getElementById('branches-grid');
-  const empty = document.getElementById('branches-empty');
-
-  if (res.success && res.data && res.data.length > 0) {
-    grid.innerHTML = res.data.map(branch => `
-      <div class="bg-surface-container-low p-8 rounded-lg border border-outline-variant/10 hover:border-primary/30 transition-all group">
-        <div class="flex items-start gap-4 mb-4">
-          <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">storefront</span>
-          <div>
-            <h3 class="font-headline text-xl font-bold text-white group-hover:text-primary transition-colors">${branch.branch_name}</h3>
-            <p class="font-label text-primary text-xs uppercase tracking-widest mt-1">${branch.city || ''}</p>
-          </div>
-        </div>
-        <p class="font-body text-on-surface-variant text-sm mb-4">${branch.location || ''}</p>
-        ${branch.phone ? `<div class="flex items-center gap-2 text-on-surface-variant text-sm"><span class="material-symbols-outlined text-sm">call</span>${branch.phone}</div>` : ''}
-        ${branch.latitude && branch.longitude ? `
-          <div class="mt-4 pt-4 border-t border-outline-variant/10">
-            <a href="https://www.google.com/maps/dir/?api=1&destination=${branch.latitude},${branch.longitude}" 
-               target="_blank" 
-               class="inline-flex items-center space-x-2 text-sm text-primary hover:underline font-bold">
-                <span>📍 Open in Maps</span>
-            </a>
-          </div>
-        ` : ''}
-      </div>
-    `).join('');
-  } else {
-    grid.classList.add('hidden');
-    empty.classList.remove('hidden');
-  }
-});
-</script>
 </body></html>
