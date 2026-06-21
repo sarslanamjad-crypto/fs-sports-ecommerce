@@ -101,7 +101,7 @@
           x-transition:leave="transition ease-in duration-150"
           x-transition:leave-start="opacity-100 translate-y-0 scale-100"
           x-transition:leave-end="opacity-0 translate-y-2 scale-95"
-          class="absolute right-0 top-full mt-3 w-[360px] sm:w-[420px] bg-[#141414]/95 backdrop-blur-2xl border border-white/10 rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.7)] overflow-hidden z-[100]"
+          class="fixed left-4 right-4 top-20 mt-2 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[420px] bg-[#141414]/95 backdrop-blur-2xl border border-white/10 rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.7)] overflow-hidden z-[100]"
           style="display: none;"
           id="global-search-dropdown"
         >
