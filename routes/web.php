@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\backend\AdminFaqsController;
-use App\Http\Controllers\backend\AdminHomeController;
-use App\Http\Controllers\backend\AdminLoginController;
-use App\Http\Controllers\backend\AdminProjectsController;
-use App\Http\Controllers\backend\TeamMemberController;
-use App\Http\Controllers\backend\StatusController;
+use App\Http\Controllers\Backend\AdminFaqsController;
+use App\Http\Controllers\Backend\AdminHomeController;
+use App\Http\Controllers\Backend\AdminLoginController;
+use App\Http\Controllers\Backend\AdminProjectsController;
+use App\Http\Controllers\Backend\TeamMemberController;
+use App\Http\Controllers\Backend\StatusController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\AdminController;
 use App\Http\Controllers\Backend\AdminAuditLogController;
