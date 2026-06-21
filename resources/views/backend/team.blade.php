@@ -36,9 +36,9 @@
                                     </td>
                                     <td>{{ $team->designation }}</td>
                                     <td>{{ $team->shortintro }}</td>
-                                    <td>
-                                        <img src="/backend/images/team/{{$team->image}}" class="rounded-circle" width="50px" height="50px" alt="Image Not Found">
-                                    </td>
+                                     <td>
+                                         <img @if(Str::startsWith($team->image, ['http://', 'https://'])) src="{{ $team->image }}" @else src="{{ asset('backend/images/team/' . $team->image) }}" @endif class="rounded-circle" width="50px" height="50px" alt="Image Not Found">
+                                     </td>
                                     <td>
                                         <div x-data="{ 
                                             status: {{ $team->status }}, 
