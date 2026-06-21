@@ -383,8 +383,8 @@ function redirectToLogin() {
 async function addToCartHandler(productId) {
     const res = await FrontendAPI.addToCart(productId);
     if (res.status === 401 || res._status === 401 || (!res.success && res.message === 'Please login first.')) {
-        DOMUtils.toast('Please login to add items to cart.', 'error');
-        setTimeout(redirectToLogin, 1500);
+        DOMUtils.toast('Please login first', 'error');
+        redirectToLogin();
         return;
     }
     if (res._status === 200 && res.success) {
@@ -397,8 +397,8 @@ async function addToCartHandler(productId) {
 async function addToWishlistHandler(productId) {
     const res = await FrontendAPI.addToWishlist(productId);
     if (res.status === 401 || res._status === 401 || (!res.success && res.message === 'Please login first.')) {
-        DOMUtils.toast('Please login to add items to wishlist.', 'error');
-        setTimeout(redirectToLogin, 1500);
+        DOMUtils.toast('Please login first', 'error');
+        redirectToLogin();
         return;
     }
     if (res._status === 200 && res.success) {
