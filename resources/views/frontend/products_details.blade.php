@@ -43,7 +43,7 @@
     <div class="relative">
       <div id="product-image-container" class="aspect-square bg-surface-container-low rounded-lg overflow-hidden flex items-center justify-center">
         @if ($product->image)
-          <img class="w-full h-full object-cover" src="{{ str_starts_with($product->image, 'http') ? $product->image : asset('storage/' . $product->image) }}" alt="{{ $product->title }}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <img class="w-full h-full object-cover" @if(Str::startsWith($product->image, ['http://', 'https://'])) src="{{ $product->image }}" @else src="{{ asset('storage/' . $product->image) }}" @endif alt="{{ $product->title }}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
           <div style="display:none;background:linear-gradient(135deg,#1a1a1a,#0a0a0a);" class="w-full h-full items-center justify-center">
             <span class="text-[#f97316] font-black text-8xl">{{ strtoupper(substr($product->title, 0, 2)) }}</span>
           </div>

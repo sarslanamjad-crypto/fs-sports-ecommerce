@@ -176,7 +176,7 @@
           <div class="aspect-[4/5] relative overflow-hidden flex items-center justify-center" style="background:linear-gradient(135deg,#111,#1a1a1a);">
               @if ($product->image)
                   <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                       src="{{ str_starts_with($product->image, 'http') ? $product->image : asset('storage/' . $product->image) }}" alt="{{ $product->title }}"
+                       @if(Str::startsWith($product->image, ['http://', 'https://'])) src="{{ $product->image }}" @else src="{{ asset('storage/' . $product->image) }}" @endif alt="{{ $product->title }}"
                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
                   <div style="display:none;" class="absolute inset-0 items-center justify-center">
                       <span class="text-primary font-black text-5xl">{{ strtoupper(substr($product->title ?? 'FS', 0, 2)) }}</span>
