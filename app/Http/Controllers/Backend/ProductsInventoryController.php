@@ -32,8 +32,8 @@ class ProductsInventoryController extends Controller
         $data = $request->except('image');
 
         if ($request->hasFile('image')) {
-            // Upload directly to Cloudinary disk
-            $data['image'] = $request->file('image')->store('products', 'cloudinary');
+            // Upload directly to Cloudinary and get secure URL path
+            $data['image'] = $request->file('image')->storeOnCloudinary('products')->getSecurePath();
         }
 
         ProductsInventory::create($data);
@@ -60,8 +60,8 @@ class ProductsInventoryController extends Controller
             // Delete old image if it exists
             $this->deleteImage($item->image);
 
-            // Upload directly to Cloudinary disk
-            $data['image'] = $request->file('image')->store('products', 'cloudinary');
+            // Upload directly to Cloudinary and get secure URL path
+            $data['image'] = $request->file('image')->storeOnCloudinary('products')->getSecurePath();
         }
 
         $item->update($data);
