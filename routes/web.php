@@ -60,7 +60,7 @@ Route::get('/stores', [FrontendController::class, 'storeLocator'])->name('store_
 Route::get('/wishlist', fn() => view('frontend.wishlist'))->name('wishlist.html');
 Route::get('/faqs', fn() => view('frontend.faqs'))->name('faqs.html');
 Route::get('/cart', fn() => view('frontend.cart_checkout'))->name('cart_checkout.html');
-Route::get('/product/{id}', fn($id) => view('frontend.products_details', ['productId' => $id]))->name('products_details.html');
+Route::get('/product/{id}', [FrontendController::class, 'productDetails'])->name('products_details.html');
 Route::get('/account', fn() => view('frontend.my_account'))->name('my_account.html');
 Route::get('/login', fn() => view('frontend.login_signup'))->name('login_signup.html');
 
