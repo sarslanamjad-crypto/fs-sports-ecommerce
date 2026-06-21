@@ -8,10 +8,31 @@ use App\Models\ProductsInventory;
 use App\Models\ProductReview;
 use App\Models\SiteSetting;
 use App\Models\Team;
+use App\Models\Faq;
 use Illuminate\Http\Request;
 
 class FrontendController extends Controller
 {
+    public function home()
+    {
+        $categories = Category::where('is_active', 1)->get();
+
+        $featuredProducts = ProductsInventory::where('is_activated', 1)
+            ->with('category')
+            ->orderByRaw('discount_percentage DESC')
+            ->orderBy('created_at', 'desc')
+            ->take(6)
+            ->get();
+
+        return view('frontend.homepage', compact('categories', 'featuredProducts'));
+    }
+
+    public function faqs()
+    {
+        $faqs = Faq::active()->get();
+        return view('frontend.faqs', compact('faqs'));
+    }
+
     public function storeLocator()
     {
         // Query active branches (using the database column 'is_active')

@@ -64,46 +64,27 @@
 
     <!-- FAQs Container -->
     <div id="faqs-container" class="space-y-4">
-        <!-- Skeleton Loading -->
-        <div class="h-20 bg-surface-container-high rounded-xl skeleton-pulse"></div>
-        <div class="h-20 bg-surface-container-high rounded-xl skeleton-pulse"></div>
-        <div class="h-20 bg-surface-container-high rounded-xl skeleton-pulse"></div>
+        @forelse ($faqs as $index => $faq)
+            <div class="bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/20">
+                <button class="w-full px-8 py-6 flex justify-between items-center bg-surface-container-highest hover:bg-surface-container-high transition-colors text-left" onclick="toggleFaq({{ $index }})">
+                    <h3 class="font-headline font-bold text-lg pr-8">{{ $faq->question }}</h3>
+                    <span id="faq-icon-{{ $index }}" class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+                </button>
+                <div id="faq-answer-{{ $index }}" class="hidden px-8 pb-6 bg-surface-container-highest">
+                    <p class="font-body text-on-surface-variant leading-relaxed border-t border-outline-variant/20 pt-6 mt-2">{{ $faq->answer }}</p>
+                </div>
+            </div>
+        @empty
+            <div class="text-center py-16 bg-surface-container-low rounded-xl border border-outline-variant/20">
+                <span class="material-symbols-outlined text-outline-variant text-5xl mb-4">info</span>
+                <p class="font-headline text-on-surface-variant text-lg">No FAQs available yet.</p>
+            </div>
+        @endforelse
     </div>
 </main>
 
 @include('frontend.footer')
-<script src="{{ asset('js/frontend-api.js') }}"></script>
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const faqsRes = await FrontendAPI.getFaqs();
-        const container = document.getElementById('faqs-container');
-        
-        if (faqsRes.success && faqsRes.data && faqsRes.data.length > 0) {
-            container.innerHTML = faqsRes.data.map((faq, index) => `
-                <div class="bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/20">
-                    <button class="w-full px-8 py-6 flex justify-between items-center bg-surface-container-highest hover:bg-surface-container-high transition-colors text-left" onclick="toggleFaq(${index})">
-                        <h3 class="font-headline font-bold text-lg pr-8">${faq.question}</h3>
-                        <span id="faq-icon-${index}" class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
-                    </button>
-                    <div id="faq-answer-${index}" class="hidden px-8 pb-6 bg-surface-container-highest">
-                        <p class="font-body text-on-surface-variant leading-relaxed border-t border-outline-variant/20 pt-6 mt-2">${faq.answer}</p>
-                    </div>
-                </div>
-            `).join('');
-        } else {
-            container.innerHTML = `
-                <div class="text-center py-16 bg-surface-container-low rounded-xl border border-outline-variant/20">
-                    <span class="material-symbols-outlined text-outline-variant text-5xl mb-4">info</span>
-                    <p class="font-headline text-on-surface-variant text-lg">No FAQs available yet.</p>
-                </div>
-            `;
-        }
-    } catch (e) {
-        console.error('Failed to load FAQs:', e);
-    }
-});
-
 function toggleFaq(index) {
     const answer = document.getElementById('faq-answer-' + index);
     const icon = document.getElementById('faq-icon-' + index);

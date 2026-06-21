@@ -51,14 +51,14 @@ use App\Http\Controllers\Api\StripePaymentController;
 
 // Frontend Pages (API-First — all data fetched via /api/frontend/*)
 
-Route::get('/', fn() => view('frontend.homepage'))->name('homepage.html');
+Route::get('/', [FrontendController::class, 'home'])->name('homepage.html');
 Route::get('/shop', [FrontendController::class, 'shop'])->name('shop_page.html');
 Route::get('/about', [FrontendController::class, 'aboutUs'])->name('about_us.html');
 Route::get('/stores', [FrontendController::class, 'storeLocator'])->name('store_locator.html');
 
 
 Route::get('/wishlist', fn() => view('frontend.wishlist'))->name('wishlist.html');
-Route::get('/faqs', fn() => view('frontend.faqs'))->name('faqs.html');
+Route::get('/faqs', [FrontendController::class, 'faqs'])->name('faqs.html');
 Route::get('/cart', fn() => view('frontend.cart_checkout'))->name('cart_checkout.html');
 Route::get('/product/{id}', [FrontendController::class, 'productDetails'])->name('products_details.html');
 Route::get('/account', fn() => view('frontend.my_account'))->name('my_account.html');

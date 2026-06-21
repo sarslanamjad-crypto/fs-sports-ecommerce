@@ -146,13 +146,78 @@
           </div>
           <a class="font-label text-primary hover:underline transition-all" href="{{ route('shop_page.html') }}">EXPLORE ALL GEAR →</a>
         </div>
-        <!-- Dynamic Product Grid (populated via API) -->
+        <!-- Dynamic Product Grid -->
         <div id="featured-products-grid" class="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <!-- Skeleton Loading -->
-          <div class="md:col-span-2 md:row-span-2 bg-surface-container-low rounded-xl h-[500px] skeleton-pulse"></div>
-          <div class="bg-surface-container-low p-6 h-[240px] skeleton-pulse rounded-xl"></div>
-          <div class="bg-surface-container-low p-6 h-[240px] skeleton-pulse rounded-xl"></div>
-          <div class="bg-surface-container-low p-6 h-[240px] col-span-1 md:col-span-2 skeleton-pulse rounded-xl"></div>
+          @forelse ($featuredProducts as $i => $product)
+            @php
+              $isDiscounted = $product->discount_percentage > 0 && $product->discounted_price !== null;
+              $gridClass = ($i === 0 || $i === 5) ? 'md:col-span-2 md:row-span-2' : '';
+              $minHeight = ($i === 0 || $i === 5) ? 'min-h-[500px]' : 'min-h-[300px]';
+              $initials = strtoupper(substr($product->title ?: 'FS', 0, 2));
+            @endphp
+            <div class="{{ $gridClass }} relative group overflow-hidden rounded-xl cursor-pointer {{ $minHeight }}"
+                 style="background:linear-gradient(135deg,#1a1a1a,#0a0a0a);"
+                 onclick="window.location.href='/product/{{ $product->id }}'">
+
+              <!-- Background Image (Animated on Hover) -->
+              <img alt="{{ $product->title }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80"
+                   @if(Str::startsWith($product->image, ['http://', 'https://']))
+                     src="{{ $product->image }}"
+                   @else
+                     src="{{ asset('storage/' . $product->image) }}"
+                   @endif
+                   onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+
+              <!-- Placeholder display when no image -->
+              <div style="display:none;background:linear-gradient(135deg,#111,#1a1a1a);" class="absolute inset-0 items-center justify-center">
+                  <span style="color:#f97316;font-size:3rem;font-weight:900;">{{ $initials }}</span>
+              </div>
+
+              <!-- Gradient Overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent"></div>
+
+              <!-- Top Badges -->
+              <div class="absolute top-4 left-4 flex gap-2 z-10">
+                <span class="bg-tertiary text-on-tertiary font-label text-[10px] px-2 py-0.5 uppercase font-bold rounded-sm shadow-lg">
+                  {{ $i === 0 ? 'Featured' : 'New Drop' }}
+                </span>
+                @if($product->is_in_house_brand == 1)
+                  <span class="bg-primary-container text-on-primary-container font-label text-[10px] px-2 py-0.5 uppercase font-bold rounded-sm shadow-lg">In-House</span>
+                @endif
+              </div>
+              @if($isDiscounted)
+                <span class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-headline font-black text-xs px-3 py-1.5 uppercase rounded shadow-lg tracking-wider absolute top-4 right-4 z-10">{{ $product->discount_percentage }}% OFF</span>
+              @endif
+
+              <!-- Bottom Content -->
+              <div class="absolute bottom-6 left-6 right-6 z-10">
+                <p class="font-label text-primary font-bold text-[10px] uppercase tracking-widest mb-1 shadow-sm font-black drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+                  {{ $product->category ? $product->category->title : 'Performance Gear' }}
+                </p>
+                <h3 class="font-headline text-2xl font-black text-white italic leading-tight mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                  {{ $product->title }}
+                </h3>
+                <div class="flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span class="font-headline font-bold text-primary text-xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] flex items-center gap-2">
+                      @if($isDiscounted)
+                        Rs. {{ number_format($product->discounted_price, 0, '.', '') }} <span class="text-slate-400 line-through text-xs font-normal">Rs. {{ number_format($product->price, 0, '.', '') }}</span>
+                      @else
+                        Rs. {{ number_format($product->price, 0, '.', '') }}
+                      @endif
+                  </span>
+                  <button onclick="event.stopPropagation(); addToCartHandler({{ $product->id }})"
+                    class="bg-gradient-to-br from-primary to-error text-white font-headline font-black px-6 py-2 rounded shadow-[0_4px_15px_rgba(249,115,22,0.4)] transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:scale-105 active:scale-95 text-xs">
+                    ADD TO BAG
+                  </button>
+                </div>
+              </div>
+            </div>
+          @empty
+            <div class="md:col-span-4 text-center py-20">
+              <span class="material-symbols-outlined text-6xl text-outline-variant mb-4 block">inventory_2</span>
+              <p class="font-headline text-xl text-on-surface-variant">No products yet. Add products in the admin panel!</p>
+            </div>
+          @endforelse
         </div>
       </div>
     </section>
@@ -217,103 +282,6 @@
 
   <!-- Footer -->
   @include('frontend.footer')
-
-  <!-- API Client -->
-  <script src="{{ asset('js/frontend-api.js') }}"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      // ─── Load Featured Products ─────────────────────────────
-      const featuredGrid = document.getElementById('featured-products-grid');
-      try {
-        const res = await FrontendAPI.getFeaturedProducts();
-        if (res.success && res.data && res.data.length > 0) {
-          let html = '';
-
-          // Helper: generate a gradient placeholder with product initials
-          function placeholderBg(title) {
-            return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect fill="#1a1a1a" width="600" height="600"/><text fill="#f97316" font-family="sans-serif" font-size="64" font-weight="bold" x="50%" y="50%" text-anchor="middle" dy=".35em">${(title||'FS').substring(0,2).toUpperCase()}</text></svg>`)}`;
-          }
-
-          res.data.forEach((product, i) => {
-            const imgSrc = product.image
-              ? (product.image.startsWith('http') ? product.image : `/storage/${product.image}`)
-              : placeholderBg(product.title);
-            const inHouse = product.is_in_house_brand == 1;
-
-            const isDiscounted = product.discount_percentage > 0 && product.discounted_price !== null;
-            const discountBadgeHtml = isDiscounted
-              ? `<span class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-headline font-black text-xs px-3 py-1.5 uppercase rounded shadow-lg tracking-wider absolute top-4 right-4 z-10">${product.discount_percentage}% OFF</span>`
-              : '';
-
-            // Spans 2 columns if it's the first product or every 4th product to maintain the bento grid look
-            const gridClass = (i === 0 || i === 5) ? 'md:col-span-2 md:row-span-2' : '';
-            const minHeight = (i === 0 || i === 5) ? 'min-h-[500px]' : 'min-h-[300px]';
-
-            html += `
-              <div class="${gridClass} relative group overflow-hidden rounded-xl cursor-pointer ${minHeight}"
-                   style="background:linear-gradient(135deg,#1a1a1a,#0a0a0a);"
-                   onclick="window.location.href='/product/${product.id}'">
-
-                <!-- Background Image (Animated on Hover) -->
-                <img alt="${product.title}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80"
-                     src="${imgSrc}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
-
-                <!-- Placeholder display when no image -->
-                <div style="display:none;background:linear-gradient(135deg,#111,#1a1a1a);" class="absolute inset-0 items-center justify-center">
-                    <span style="color:#f97316;font-size:3rem;font-weight:900;">${(product.title||'FS').substring(0,2).toUpperCase()}</span>
-                </div>
-
-                <!-- Gradient Overlay -->
-                <div class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent"></div>
-
-                <!-- Top Badges -->
-                <div class="absolute top-4 left-4 flex gap-2 z-10">
-                  <span class="bg-tertiary text-on-tertiary font-label text-[10px] px-2 py-0.5 uppercase font-bold rounded-sm shadow-lg">
-                    ${i === 0 ? 'Featured' : 'New Drop'}
-                  </span>
-                  ${inHouse ? '<span class="bg-primary-container text-on-primary-container font-label text-[10px] px-2 py-0.5 uppercase font-bold rounded-sm shadow-lg">In-House</span>' : ''}
-                </div>
-                ${discountBadgeHtml}
-
-                <!-- Bottom Content -->
-                <div class="absolute bottom-6 left-6 right-6 z-10">
-                  <p class="font-label text-primary font-bold text-[10px] uppercase tracking-widest mb-1 shadow-sm font-black drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
-                    ${product.category ? product.category.title : 'Performance Gear'}
-                  </p>
-                  <h3 class="font-headline text-2xl font-black text-white italic leading-tight mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                    ${product.title}
-                  </h3>
-                  <div class="flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span class="font-headline font-bold text-primary text-xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] flex items-center gap-2">
-                        ${isDiscounted 
-                          ? `Rs. ${parseFloat(product.discounted_price).toFixed(0)} <span class="text-slate-400 line-through text-xs font-normal">Rs. ${parseFloat(product.price).toFixed(0)}</span>`
-                          : `Rs. ${parseFloat(product.price).toFixed(0)}`
-                        }
-                    </span>
-                    <button onclick="event.stopPropagation(); addToCartHandler(${product.id})"
-                      class="bg-gradient-to-br from-primary to-error text-white font-headline font-black px-6 py-2 rounded shadow-[0_4px_15px_rgba(249,115,22,0.4)] transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:scale-105 active:scale-95 text-xs">
-                      ADD TO BAG
-                    </button>
-                  </div>
-                </div>
-              </div>`;
-          });
-          featuredGrid.innerHTML = html;
-        } else {
-          featuredGrid.innerHTML = `
-            <div class="md:col-span-4 text-center py-20">
-              <span class="material-symbols-outlined text-6xl text-outline-variant mb-4 block">inventory_2</span>
-              <p class="font-headline text-xl text-on-surface-variant">No products yet. Add products in the admin panel!</p>
-            </div>`;
-        }
-      } catch (e) {
-        console.error('Failed to load featured products', e);
-      }
-
-
-
-    });
-  </script>
 </body>
 
 </html>
