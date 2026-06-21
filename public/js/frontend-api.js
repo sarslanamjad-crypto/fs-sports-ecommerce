@@ -353,7 +353,7 @@ const DOMUtils = {
      */
     toast(message, type = 'success') {
         const toast = document.createElement('div');
-        toast.className = `fixed bottom-6 right-6 z-[100] px-6 py-4 rounded-md font-label text-sm tracking-wide shadow-2xl transition-all duration-500 transform translate-y-20 opacity-0`;
+        toast.className = `fixed bottom-6 right-6 z-[10000] px-6 py-4 rounded-md font-label text-sm tracking-wide shadow-2xl transition-all duration-500 transform translate-y-20 opacity-0`;
         toast.style.background = type === 'success' ? '#f97316' : '#dc2626';
         toast.style.color = '#ffffff';
         toast.textContent = message;

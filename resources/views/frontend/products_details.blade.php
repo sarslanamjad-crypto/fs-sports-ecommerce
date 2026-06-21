@@ -138,7 +138,7 @@
     <div id="review-form-container" class="mt-12 bg-surface-container-low p-8 rounded-lg max-w-2xl mx-auto">
       <h3 class="font-headline text-2xl font-bold mb-6 text-center">Write a Review</h3>
       @if (session('user_id'))
-        <form id="submit-review-form" class="space-y-6">
+        <form id="submit-review-form" class="space-y-6" data-no-loader>
           <div>
             <label class="block font-label text-sm text-on-surface-variant mb-2">Rating</label>
             <div class="flex gap-2">
@@ -210,7 +210,9 @@
           return;
         }
 
+        window.dispatchEvent(new CustomEvent('loader-show'));
         const revRes = await FrontendAPI.submitReview(productId, currentRating, comment);
+        window.dispatchEvent(new CustomEvent('loader-hide'));
         if (revRes.success) {
           DOMUtils.toast('Review submitted! It will appear after admin approval.');
           commentInput.value = '';
