@@ -45,8 +45,7 @@ class TeamMemberController extends Controller
             ]
         );
         $ADMIN_STATUS = 1;
-        $ImageName = 'fs_team_' . time() . '.' . $request->image->extension();
-        $request->image->move(public_path('backend/images/team'), $ImageName);
+        $imageUrl = $request->file('image')->storeOnCloudinary('team')->getSecurePath();
         $team = new Team;
         $team->fullname = $request->fullname;
         $team->email = $request->email;
@@ -57,7 +56,7 @@ class TeamMemberController extends Controller
         $team->insta = $request->insta;
         $team->twitter = $request->twitter;
         $team->facebook = $request->facebook;
-        $team->image = $ImageName;
+        $team->image = $imageUrl;
         $team->status = $ADMIN_STATUS;
         $team->save();
         return back()->withSuccess('Member Record Added Successfully');
@@ -93,9 +92,8 @@ class TeamMemberController extends Controller
         $team = Team::where('id', $id)->first();
         $MEMBER_STATUS = 1;
         if (isset($request->image)) {
-            $ImageName = 'fs_team_' . time() . '.' . $request->image->extension();
-            $request->image->move(public_path('backend/images/team'), $ImageName);
-            $team->image = $ImageName;
+            $imageUrl = $request->file('image')->storeOnCloudinary('team')->getSecurePath();
+            $team->image = $imageUrl;
         }
         $team->fullname = $request->fullname;
         $team->email = $request->email;
