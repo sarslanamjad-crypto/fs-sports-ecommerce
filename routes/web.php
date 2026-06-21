@@ -63,6 +63,7 @@ Route::get('/cart', fn() => view('frontend.cart_checkout'))->name('cart_checkout
 Route::get('/product/{id}', [FrontendController::class, 'productDetails'])->name('products_details.html');
 Route::get('/account', fn() => view('frontend.my_account'))->name('my_account.html');
 Route::get('/login', fn() => view('frontend.login_signup'))->name('login_signup.html');
+Route::post('/register', [FrontendApiController::class, 'register']);
 Route::get('/clear', function () {
     \Illuminate\Support\Facades\Artisan::call('config:clear');
     return 'Cleared';
@@ -110,7 +111,6 @@ Route::prefix('api/frontend')->group(function () {
     Route::post('/whatsapp-click', [FrontendApiController::class, 'logWhatsappClick']);
 
     // Auth
-    // Route::post('/register', [FrontendApiController::class, 'register']); // Handled in routes/api.php to avoid 404 issues on Vercel
     Route::post('/login', [FrontendApiController::class, 'login']);
     Route::post('/logout', [FrontendApiController::class, 'logout']);
     Route::get('/user-session', [FrontendApiController::class, 'userSession']);

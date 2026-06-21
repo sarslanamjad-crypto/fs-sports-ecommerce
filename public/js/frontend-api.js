@@ -136,10 +136,28 @@ const FrontendAPI = {
 
     // ─── Auth ──────────────────────────────────────────────────
     async register(data) {
-        return this._fetch('/register', {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        const response = await fetch('/register', {
             method: 'POST',
-            body: data,
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': csrfToken ? csrfToken.getAttribute('content') : '',
+            },
+            body: JSON.stringify(data)
         });
+        
+        let resData = {};
+        try {
+            resData = await response.json();
+        } catch (e) {}
+        
+        if (resData && typeof resData === 'object') {
+            resData._status = response.status;
+        }
+        return resData;
     },
 
     async login(email, password) {
