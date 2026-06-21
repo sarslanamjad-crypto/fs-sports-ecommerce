@@ -64,10 +64,11 @@ class FrontendController extends Controller
 
         // Apply category filter if active
         if ($request->filled('category')) {
-            if ($request->category === 'discount') {
+            $cats = is_array($request->category) ? $request->category : [$request->category];
+            if (in_array('discount', $cats)) {
                 $query->where('discount_percentage', '>', 0);
             } else {
-                $query->where('category_id', $request->category);
+                $query->whereIn('category_id', $cats);
             }
         }
 

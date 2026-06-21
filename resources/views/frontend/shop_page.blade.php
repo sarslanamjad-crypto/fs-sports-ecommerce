@@ -103,6 +103,9 @@
                 Engineered for the elite. Our curated selection of high-velocity gear represents the intersection of technical innovation and raw athletic power.
             </p>
 </div>
+@php
+  $selectedCategories = is_array(request('category')) ? request('category') : (request()->has('category') && request('category') !== '' ? [request('category')] : []);
+@endphp
 <form id="filter-form" method="GET" action="{{ route('shop_page.html') }}" class="flex flex-col lg:flex-row gap-12 w-full">
 <!-- Sidebar Filtering (Dynamic Categories) -->
 <aside class="w-full lg:w-72 flex-shrink-0 space-y-10">
@@ -110,15 +113,17 @@
 <h3 class="font-label text-xs uppercase tracking-widest text-primary mb-6">Categories</h3>
 <ul id="category-filters" class="space-y-4 font-body">
   <li>
-    <label class="flex items-center gap-3 cursor-pointer group">
-      <input type="radio" name="category" value="" class="category-radio w-4 h-4 bg-surface-container-highest border-none text-primary focus:ring-primary ring-offset-background" {{ !request()->has('category') || request('category') === '' || request('category') === null ? 'checked' : '' }} onchange="this.form.submit()"/>
-      <span class="group-hover:text-primary transition-colors">All</span>
-    </label>
+    <a href="{{ route('shop_page.html', request()->except('category')) }}" class="flex items-center gap-3 cursor-pointer group">
+      <span class="w-4 h-4 rounded-full border border-outline-variant group-hover:border-primary flex items-center justify-center {{ empty($selectedCategories) ? 'bg-primary border-primary' : '' }}">
+        @if(empty($selectedCategories)) <div class="w-2 h-2 rounded-full bg-background"></div> @endif
+      </span>
+      <span class="{{ empty($selectedCategories) ? 'text-primary font-bold' : 'group-hover:text-primary transition-colors' }}">All</span>
+    </a>
   </li>
   @foreach ($categories as $cat)
     <li>
       <label class="flex items-center gap-3 cursor-pointer group">
-        <input type="radio" name="category" value="{{ $cat->id }}" class="category-radio w-4 h-4 bg-surface-container-highest border-none text-primary focus:ring-primary ring-offset-background" {{ request('category') == $cat->id ? 'checked' : '' }} onchange="this.form.submit()"/>
+        <input type="checkbox" name="category[]" value="{{ $cat->id }}" class="w-4 h-4 bg-surface-container-highest border-none rounded text-primary focus:ring-primary ring-offset-background" {{ in_array($cat->id, $selectedCategories) ? 'checked' : '' }} onchange="this.form.submit()"/>
         <span class="group-hover:text-primary transition-colors">{{ $cat->category_name }}</span>
       </label>
     </li>
@@ -149,16 +154,26 @@
 <div class="flex-1">
 <!-- Category Toggles (Top of Grid) -->
 <div id="category-tabs" class="flex flex-wrap gap-3 mb-10 pb-8 border-b border-outline-variant/15">
-<a href="{{ route('shop_page.html', request()->except('category')) }}" class="px-6 py-2 {{ !request()->has('category') || request('category') === null || request('category') === '' ? 'bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)]' : 'bg-surface-container-low text-on-surface-variant hover:text-white' }} font-label text-sm rounded-md transition-all">All Gear</a>
+<a href="{{ route('shop_page.html', request()->except('category')) }}" class="px-6 py-2 {{ empty($selectedCategories) ? 'bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)]' : 'bg-surface-container-low text-on-surface-variant hover:text-white' }} font-label text-sm rounded-md transition-all">All Gear</a>
 @foreach ($categories as $cat)
-  <a href="{{ route('shop_page.html', ['category' => $cat->id] + request()->except('category')) }}" class="px-6 py-2 {{ request('category') == $cat->id ? 'bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)]' : 'bg-surface-container-low text-on-surface-variant hover:text-white' }} font-label text-sm rounded-md transition-all">{{ $cat->category_name }}</a>
+  @php
+    $catRouteParams = request()->except('category');
+    $newCats = in_array($cat->id, $selectedCategories) ? array_diff($selectedCategories, [$cat->id]) : array_merge($selectedCategories, [$cat->id]);
+    if (!empty($newCats)) $catRouteParams['category'] = $newCats;
+  @endphp
+  <a href="{{ route('shop_page.html', $catRouteParams) }}" class="px-6 py-2 {{ in_array($cat->id, $selectedCategories) ? 'bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)]' : 'bg-surface-container-low text-on-surface-variant hover:text-white' }} font-label text-sm rounded-md transition-all">{{ $cat->category_name }}</a>
 @endforeach
 
 @php
   $hasDiscounts = \App\Models\ProductsInventory::where('is_activated', 1)->where('discount_percentage', '>', 0)->exists();
 @endphp
 @if ($hasDiscounts)
-  <a href="{{ route('shop_page.html', ['category' => 'discount'] + request()->except('category')) }}" class="px-6 py-2 {{ request('category') === 'discount' ? 'bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)]' : 'bg-surface-container-low text-on-surface-variant hover:text-white' }} font-label text-sm rounded-md transition-all">Discount</a>
+  @php
+    $discRouteParams = request()->except('category');
+    $newDiscCats = in_array('discount', $selectedCategories) ? array_diff($selectedCategories, ['discount']) : array_merge($selectedCategories, ['discount']);
+    if (!empty($newDiscCats)) $discRouteParams['category'] = $newDiscCats;
+  @endphp
+  <a href="{{ route('shop_page.html', $discRouteParams) }}" class="px-6 py-2 {{ in_array('discount', $selectedCategories) ? 'bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)]' : 'bg-surface-container-low text-on-surface-variant hover:text-white' }} font-label text-sm rounded-md transition-all">Discount</a>
 @endif
 </div>
 <!-- Product Grid - Dynamic -->
