@@ -26,7 +26,7 @@ class Authenticate extends Middleware
         if (!$request->session()->has('user_id')) {
             $request->session()->flash('error', 'Please login to continue.');
 
-            if ($request->expectsJson() || $request->ajax() || $request->is('api/frontend/*')) {
+            if ($request->expectsJson() || $request->ajax() || $request->is('fe-api/*')) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Please login first.'

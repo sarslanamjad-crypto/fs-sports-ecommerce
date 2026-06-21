@@ -72,7 +72,7 @@ Route::get('/clear', function () {
 
 // Frontend API (under web middleware for session support)
 
-Route::prefix('api/frontend')->group(function () {
+Route::prefix('fe-api')->group(function () {
     // Public: Site Settings
     Route::get('/site-settings', [FrontendApiController::class, 'siteSettings']);
 

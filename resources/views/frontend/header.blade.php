@@ -49,7 +49,7 @@
                   this.isLoading = true;
                   this.searched = false;
                   try {
-                      const res = await fetch(`/api/frontend/products/search?query=${encodeURIComponent(this.query)}`);
+                      const res = await fetch(`/fe-api/products/search?query=${encodeURIComponent(this.query)}`);
                       const json = await res.json();
                       if (this.query.length > 2) {
                           this.results = json.data || [];

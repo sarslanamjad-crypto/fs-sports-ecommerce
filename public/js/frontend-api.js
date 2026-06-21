@@ -6,7 +6,7 @@
  */
 
 const FrontendAPI = {
-    baseUrl: '/api/frontend',
+    baseUrl: '/fe-api',
 
     // ─── Generic Fetch Wrapper ─────────────────────────────────
     async _fetch(endpoint, options = {}) {

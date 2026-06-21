@@ -120,7 +120,7 @@
     :style="'bottom: ' + (cookiesAccepted ? (toastActive ? '6.5rem' : '1.5rem') : (toastActive ? '10.5rem' : '5.5rem'))"
     aria-label="Chat with us on WhatsApp"
     id="whatsapp-fab"
-    @click="fetch('/api/frontend/whatsapp-click', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } })"
+    @click="fetch('/fe-api/whatsapp-click', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } })"
   >
     {{-- Circular Button --}}
     <div class="relative">

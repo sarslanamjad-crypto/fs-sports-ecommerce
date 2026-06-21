@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]');
-        const stripeRes = await fetch(`/api/frontend/stripe/checkout/${out.data.order_id}`, {
+        const stripeRes = await fetch(`/fe-api/stripe/checkout/${out.data.order_id}`, {
           method: 'POST',
           credentials: 'same-origin',
           headers: {
