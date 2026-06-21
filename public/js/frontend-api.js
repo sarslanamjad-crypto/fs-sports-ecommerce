@@ -38,7 +38,7 @@ const FrontendAPI = {
                 data._status = response.status;
             }
 
-            if (response.status === 401) {
+            if (response.status === 401 && endpoint !== '/login') {
                 const error = new Error('Unauthorized');
                 error.response = { status: 401 };
                 throw error;
