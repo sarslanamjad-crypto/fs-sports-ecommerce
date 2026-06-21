@@ -103,245 +103,139 @@
                 Engineered for the elite. Our curated selection of high-velocity gear represents the intersection of technical innovation and raw athletic power.
             </p>
 </div>
-<div class="flex flex-col lg:flex-row gap-12">
+<form id="filter-form" method="GET" action="{{ route('shop_page.html') }}" class="flex flex-col lg:flex-row gap-12 w-full">
 <!-- Sidebar Filtering (Dynamic Categories) -->
 <aside class="w-full lg:w-72 flex-shrink-0 space-y-10">
 <section>
 <h3 class="font-label text-xs uppercase tracking-widest text-primary mb-6">Categories</h3>
 <ul id="category-filters" class="space-y-4 font-body">
-  <!-- Dynamic categories loaded via API -->
-  <li class="skeleton-pulse h-6 rounded"></li>
-  <li class="skeleton-pulse h-6 rounded"></li>
-  <li class="skeleton-pulse h-6 rounded"></li>
+  <li>
+    <label class="flex items-center gap-3 cursor-pointer group">
+      <input type="radio" name="category" value="" class="category-radio w-4 h-4 bg-surface-container-highest border-none text-primary focus:ring-primary ring-offset-background" {{ !request()->has('category') || request('category') === '' || request('category') === null ? 'checked' : '' }} onchange="this.form.submit()"/>
+      <span class="group-hover:text-primary transition-colors">All</span>
+    </label>
+  </li>
+  @foreach ($categories as $cat)
+    <li>
+      <label class="flex items-center gap-3 cursor-pointer group">
+        <input type="radio" name="category" value="{{ $cat->id }}" class="category-radio w-4 h-4 bg-surface-container-highest border-none text-primary focus:ring-primary ring-offset-background" {{ request('category') == $cat->id ? 'checked' : '' }} onchange="this.form.submit()"/>
+        <span class="group-hover:text-primary transition-colors">{{ $cat->category_name }}</span>
+      </label>
+    </li>
+  @endforeach
 </ul>
 </section>
 <section>
 <h3 class="font-label text-xs uppercase tracking-widest text-primary mb-6">Price Range</h3>
 <div class="px-2">
-<input id="price-range" class="w-full h-1 bg-surface-container-highest appearance-none rounded-full accent-primary cursor-pointer" type="range" min="0" max="1500" value="1500"/>
+<input id="price-range" name="price" class="w-full h-1 bg-surface-container-highest appearance-none rounded-full accent-primary cursor-pointer" type="range" min="0" max="15000" value="{{ request('price', 15000) }}" onchange="this.form.submit()"/>
 <div class="flex justify-between mt-4 font-label text-sm text-on-surface-variant">
 <span>Rs. 0</span>
-<span id="price-max-label">Rs. 1500+</span>
+<span id="price-max-label">Rs. {{ number_format(request('price', 15000)) }}+</span>
 </div>
 </div>
 </section>
 <section>
 <h3 class="font-label text-xs uppercase tracking-widest text-primary mb-6">Brand Heritage</h3>
 <ul class="space-y-4 font-body">
-<li><label class="flex items-center gap-3 cursor-pointer group"><input id="filter-inhouse" class="w-4 h-4 bg-surface-container-highest border-none rounded text-primary focus:ring-primary ring-offset-background" type="checkbox"/><span class="group-hover:text-primary transition-colors">In-House Brand Only</span></label></li>
+<li><label class="flex items-center gap-3 cursor-pointer group"><input id="filter-inhouse" name="in_house" value="1" class="w-4 h-4 bg-surface-container-highest border-none rounded text-primary focus:ring-primary ring-offset-background" type="checkbox" {{ request('in_house') == '1' ? 'checked' : '' }} onchange="this.form.submit()"/><span class="group-hover:text-primary transition-colors">In-House Brand Only</span></label></li>
 </ul>
 </section>
-<button onclick="resetFilters()" class="w-full py-3 bg-surface-container-highest hover:bg-surface-bright transition-colors font-label text-xs uppercase tracking-widest text-white">
+<a href="{{ route('shop_page.html') }}" class="block text-center w-full py-3 bg-surface-container-highest hover:bg-surface-bright transition-colors font-label text-xs uppercase tracking-widest text-white">
                     Reset Filters
-                </button>
+                </a>
 </aside>
 <!-- Product Grid Area -->
 <div class="flex-1">
 <!-- Category Toggles (Top of Grid) -->
 <div id="category-tabs" class="flex flex-wrap gap-3 mb-10 pb-8 border-b border-outline-variant/15">
-<button class="px-6 py-2 bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)] hover:shadow-[0_6px_15px_rgba(249,115,22,0.6)] font-label text-sm rounded-md transition-all scale-100 hover:brightness-110" onclick="filterByCategory(null)">All Gear</button>
+<a href="{{ route('shop_page.html', request()->except('category')) }}" class="px-6 py-2 {{ !request()->has('category') || request('category') === null || request('category') === '' ? 'bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)]' : 'bg-surface-container-low text-on-surface-variant hover:text-white' }} font-label text-sm rounded-md transition-all">All Gear</a>
+@foreach ($categories as $cat)
+  <a href="{{ route('shop_page.html', ['category' => $cat->id] + request()->except('category')) }}" class="px-6 py-2 {{ request('category') == $cat->id ? 'bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)]' : 'bg-surface-container-low text-on-surface-variant hover:text-white' }} font-label text-sm rounded-md transition-all">{{ $cat->category_name }}</a>
+@endforeach
+
+@php
+  $hasDiscounts = \App\Models\ProductsInventory::where('is_activated', 1)->where('discount_percentage', '>', 0)->exists();
+@endphp
+@if ($hasDiscounts)
+  <a href="{{ route('shop_page.html', ['category' => 'discount'] + request()->except('category')) }}" class="px-6 py-2 {{ request('category') === 'discount' ? 'bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)]' : 'bg-surface-container-low text-on-surface-variant hover:text-white' }} font-label text-sm rounded-md transition-all">Discount</a>
+@endif
 </div>
 <!-- Product Grid - Dynamic -->
-<div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-  <!-- Skeleton Loading -->
-  <div class="bg-surface-container-low h-[450px] skeleton-pulse rounded-xl"></div>
-  <div class="bg-surface-container-low h-[450px] skeleton-pulse rounded-xl"></div>
-  <div class="bg-surface-container-low h-[450px] skeleton-pulse rounded-xl"></div>
+@if ($products->isEmpty())
+  <div id="empty-state" class="text-center py-20">
+    <span class="material-symbols-outlined text-6xl text-outline-variant mb-4">inventory_2</span>
+    <p class="font-headline text-xl text-on-surface-variant">No products found.</p>
+    <p class="font-body text-on-surface-variant mt-2">Try adjusting your filters or add products in the admin panel.</p>
+  </div>
+@else
+  <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+    @foreach ($products as $product)
+      <div class="product-card group relative bg-surface-container-low rounded-xl overflow-hidden transition-all duration-500 hover:scale-[1.02] cursor-pointer min-h-[380px]"
+           onclick="window.location.href='/product/{{ $product->id }}'">
+          <div class="aspect-[4/5] relative overflow-hidden flex items-center justify-center" style="background:linear-gradient(135deg,#111,#1a1a1a);">
+              @if ($product->image)
+                  <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                       src="{{ str_starts_with($product->image, 'http') ? $product->image : asset('storage/' . $product->image) }}" alt="{{ $product->title }}"
+                       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                  <div style="display:none;" class="absolute inset-0 items-center justify-center">
+                      <span class="text-primary font-black text-5xl">{{ strtoupper(substr($product->title ?? 'FS', 0, 2)) }}</span>
+                  </div>
+              @else
+                  <span class="text-primary font-black text-5xl">{{ strtoupper(substr($product->title ?? 'FS', 0, 2)) }}</span>
+              @endif
+              <div class="absolute top-4 left-4 flex flex-col gap-2">
+                  <span class="bg-tertiary text-on-tertiary font-label text-[10px] px-2 py-1 uppercase tracking-tighter font-bold">New Arrival</span>
+                  @if ($product->is_in_house_brand == 1)
+                      <span class="bg-secondary-container text-secondary font-label text-[10px] px-2 py-1 uppercase tracking-tighter font-bold">In-House Brand</span>
+                  @endif
+              </div>
+              @if ($product->discount_percentage > 0 && $product->discounted_price !== null)
+                  <span class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-headline font-black text-xs px-3 py-1.5 uppercase rounded shadow-lg tracking-wider absolute top-4 right-4 z-10">{{ $product->discount_percentage }}% OFF</span>
+              @endif
+          </div>
+          <div class="p-6">
+              <div class="flex justify-between items-start mb-2">
+                  <h3 class="text-xl font-headline font-bold text-on-surface tracking-tight group-hover:text-primary transition-colors">{{ $product->title }}</h3>
+                  @if ($product->discount_percentage > 0 && $product->discounted_price !== null)
+                      <div class="flex items-center gap-2">
+                          <span class="font-label text-primary font-bold text-lg">Rs. {{ number_format($product->discounted_price, 0) }}</span>
+                          <span class="text-slate-400 line-through text-xs">Rs. {{ number_format($product->price, 0) }}</span>
+                      </div>
+                  @else
+                      <span class="font-label text-primary font-bold">Rs. {{ number_format($product->price, 0) }}</span>
+                  @endif
+              </div>
+              <p class="text-sm text-on-surface-variant font-body mb-6 line-clamp-2">{{ $product->description ?? 'Premium performance gear' }}</p>
+              <button class="add-to-cart-btn w-full py-3 bg-white/5 group-hover:bg-primary group-hover:text-on-primary transition-all font-label text-xs uppercase tracking-widest"
+                      data-product-id="{{ $product->id }}" onclick="event.stopPropagation(); addToCartHandler({{ $product->id }})">
+                  Add to Kit
+              </button>
+          </div>
+      </div>
+    @endforeach
+  </div>
+  
+  <div class="mt-12 flex justify-center">
+    {{ $products->links() }}
+  </div>
+@endif
 </div>
-<!-- Empty State -->
-<div id="empty-state" class="hidden text-center py-20">
-  <span class="material-symbols-outlined text-6xl text-outline-variant mb-4">inventory_2</span>
-  <p class="font-headline text-xl text-on-surface-variant">No products found.</p>
-  <p class="font-body text-on-surface-variant mt-2">Try adjusting your filters or add products in the admin panel.</p>
-</div>
-</div>
-</div>
+</form>
 </main>
 
 @include('frontend.footer')
 
 <script src="{{ asset('js/frontend-api.js') }}"></script>
 <script>
-  let allProducts = [];
-  let allCategories = [];
-  let activeCategory = null;
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    await loadProducts();
-    await loadCategories();
-
-    // Price range filter
-    document.getElementById('price-range').addEventListener('input', (e) => {
-      document.getElementById('price-max-label').textContent = `Rs. ${e.target.value}`;
-      renderProducts();
-    });
-
-    // In-house filter
-    document.getElementById('filter-inhouse').addEventListener('change', () => {
-      renderProducts();
-    });
+  document.addEventListener('DOMContentLoaded', () => {
+    const priceRange = document.getElementById('price-range');
+    const priceMaxLabel = document.getElementById('price-max-label');
+    if (priceRange && priceMaxLabel) {
+      priceRange.addEventListener('input', (e) => {
+        priceMaxLabel.textContent = `Rs. ${new Intl.NumberFormat().format(e.target.value)}`;
+      });
+    }
   });
-
-  async function loadCategories() {
-    const res = await FrontendAPI.getCategories();
-    if (res.success && res.data) {
-      allCategories = res.data;
-      const filterEl = document.getElementById('category-filters');
-      const tabsEl = document.getElementById('category-tabs');
-
-      let filterHtml = '<li><label class="flex items-center gap-3 cursor-pointer group"><input type="checkbox" id="cb-all" class="category-cb w-4 h-4 bg-surface-container-highest border-none rounded text-primary focus:ring-primary ring-offset-background" value="" checked onchange="toggleAllCategories(this)"/><span class="group-hover:text-primary transition-colors">All</span></label></li>';
-      let tabsHtml = '<button class="category-tab px-6 py-2 bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)] hover:shadow-[0_6px_15px_rgba(249,115,22,0.6)] font-label text-sm rounded-md transition-all" data-id="" onclick="filterByCategory(null)">All Gear</button>';
-
-      allCategories.forEach(cat => {
-        filterHtml += `<li><label class="flex items-center gap-3 cursor-pointer group"><input type="checkbox" class="category-cb w-4 h-4 bg-surface-container-highest border-none rounded text-primary focus:ring-primary ring-offset-background" value="${cat.id}" checked onchange="toggleCategoryCheckbox()"/><span class="group-hover:text-primary transition-colors">${cat.category_name}</span></label></li>`;
-        tabsHtml += `<button class="category-tab px-6 py-2 bg-surface-container-low text-on-surface-variant font-label text-sm rounded-md hover:text-white transition-all" data-id="${cat.id}" onclick="filterByCategory(${cat.id})">${cat.category_name}</button>`;
-      });
-
-      const hasDiscount = allProducts.some(p => p.discount_percentage > 0);
-      if (hasDiscount) {
-        tabsHtml += `<button class="category-tab px-6 py-2 bg-surface-container-low text-on-surface-variant font-label text-sm rounded-md hover:text-white transition-all" data-id="discount" onclick="filterByCategory('discount')">Discount</button>`;
-      }
-
-      filterEl.innerHTML = filterHtml;
-      tabsEl.innerHTML = tabsHtml;
-    }
-  }
-
-  async function loadProducts() {
-    const res = await FrontendAPI.getProducts();
-    if (res.success && res.data) {
-      allProducts = res.data;
-      renderProducts();
-    }
-  }
-
-  function toggleAllCategories(masterCb) {
-    document.querySelectorAll('.category-cb').forEach(cb => {
-      cb.checked = masterCb.checked;
-    });
-    syncTabsFromCheckboxes();
-    renderProducts();
-  }
-
-  function toggleCategoryCheckbox() {
-    const allCb = document.getElementById('cb-all');
-    const individualCbs = document.querySelectorAll('.category-cb:not(#cb-all)');
-    const checkedCbs = document.querySelectorAll('.category-cb:not(#cb-all):checked');
-    
-    if (allCb) {
-      allCb.checked = (individualCbs.length === checkedCbs.length);
-    }
-    syncTabsFromCheckboxes();
-    renderProducts();
-  }
-
-  function syncTabsFromCheckboxes() {
-    const checkedCbs = Array.from(document.querySelectorAll('.category-cb:not(#cb-all):checked'));
-    const totalCbs = document.querySelectorAll('.category-cb:not(#cb-all)').length;
-    const allCb = document.getElementById('cb-all');
-    const isAllChecked = allCb ? allCb.checked : false;
-
-    if (isAllChecked || checkedCbs.length === totalCbs) {
-      activeCategory = null;
-      updateTabStyles(null);
-    } else if (checkedCbs.length === 1) {
-      activeCategory = parseInt(checkedCbs[0].value);
-      updateTabStyles(activeCategory);
-    } else {
-      activeCategory = null;
-      // Deactivate all tabs since multiple/none are selected
-      document.querySelectorAll('.category-tab').forEach(tab => {
-        tab.className = 'category-tab px-6 py-2 bg-surface-container-low text-on-surface-variant font-label text-sm rounded-md hover:text-white transition-all';
-      });
-    }
-  }
-
-  function updateTabStyles(activeId) {
-    document.querySelectorAll('.category-tab').forEach(tab => {
-      const tabId = tab.dataset.id;
-      if ((activeId === null && tabId === '') || String(activeId) === tabId) {
-        tab.className = 'category-tab px-6 py-2 bg-gradient-to-br from-primary to-error text-white shadow-[0_4px_10px_rgba(249,115,22,0.4)] hover:shadow-[0_6px_15px_rgba(249,115,22,0.6)] font-label text-sm rounded-md transition-all scale-100 hover:brightness-110';
-      } else {
-        tab.className = 'category-tab px-6 py-2 bg-surface-container-low text-on-surface-variant font-label text-sm rounded-md hover:text-white transition-all';
-      }
-    });
-  }
-
-  function filterByCategory(catId) {
-    activeCategory = catId;
-    
-    const allCb = document.getElementById('cb-all');
-    if (allCb) {
-      if (catId === null) {
-        allCb.checked = true;
-        document.querySelectorAll('.category-cb').forEach(cb => cb.checked = true);
-      } else if (catId === 'discount') {
-        allCb.checked = false;
-        document.querySelectorAll('.category-cb').forEach(cb => cb.checked = false);
-      } else {
-        allCb.checked = false;
-        document.querySelectorAll('.category-cb:not(#cb-all)').forEach(cb => {
-          cb.checked = (parseInt(cb.value) === catId);
-        });
-      }
-    }
-
-    updateTabStyles(catId);
-    renderProducts();
-  }
-
-  function renderProducts() {
-    const maxPrice = parseFloat(document.getElementById('price-range').value);
-    const inHouseOnly = document.getElementById('filter-inhouse').checked;
-
-    const checkedCbs = Array.from(document.querySelectorAll('.category-cb:not(#cb-all):checked')).map(cb => parseInt(cb.value));
-    const allCb = document.getElementById('cb-all');
-    const isAllChecked = allCb ? allCb.checked : true;
-
-    let filtered = allProducts.filter(p => {
-      if (activeCategory === 'discount') {
-        if (!(p.discount_percentage > 0)) return false;
-      } else {
-        // If "All" checkbox is not checked, filter by checked individual categories
-        if (!isAllChecked) {
-          if (checkedCbs.length > 0) {
-            if (!checkedCbs.includes(p.category_id)) return false;
-          } else {
-            return false; // Show nothing if no category checked
-          }
-        }
-      }
-      const effectivePrice = (p.discounted_price !== null && p.discounted_price !== undefined) ? p.discounted_price : p.price;
-      if (effectivePrice > maxPrice) return false;
-      if (inHouseOnly && p.is_in_house_brand != 1) return false;
-      return true;
-    });
-
-    const grid = document.getElementById('product-grid');
-    const emptyState = document.getElementById('empty-state');
-
-    if (filtered.length === 0) {
-      grid.classList.add('hidden');
-      emptyState.classList.remove('hidden');
-      return;
-    }
-
-    grid.classList.remove('hidden');
-    emptyState.classList.add('hidden');
-
-    grid.innerHTML = filtered.map(product => DOMUtils.productCard(product, `/product/${product.id}`)).join('');
-  }
-
-  function resetFilters() {
-    document.getElementById('price-range').value = 1500;
-    document.getElementById('price-max-label').textContent = 'Rs. 1500+';
-    document.getElementById('filter-inhouse').checked = false;
-    
-    const allCb = document.getElementById('cb-all');
-    if (allCb) allCb.checked = true;
-    document.querySelectorAll('.category-cb').forEach(cb => cb.checked = true);
-    
-    filterByCategory(null);
-  }
 </script>
 </body></html>

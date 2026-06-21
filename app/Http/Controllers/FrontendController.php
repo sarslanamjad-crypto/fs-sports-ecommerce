@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\Category;
 use App\Models\ProductsInventory;
 use App\Models\ProductReview;
 use Illuminate\Http\Request;
@@ -28,5 +29,49 @@ class FrontendController extends Controller
             ->get();
 
         return view('frontend.products_details', compact('product', 'reviews'));
+    }
+
+    public function shop(Request $request)
+    {
+        // Fetch active categories (is_active = 1)
+        $categories = Category::where('is_active', 1)->get();
+
+        // Fetch active products (mapped status = 1 to actual DB column is_activated = 1)
+        $query = ProductsInventory::where('is_activated', 1)->with('category');
+
+        // Apply category filter if active
+        if ($request->filled('category')) {
+            if ($request->category === 'discount') {
+                $query->where('discount_percentage', '>', 0);
+            } else {
+                $query->where('category_id', $request->category);
+            }
+        }
+
+        // Apply price range filter
+        if ($request->filled('price')) {
+            $maxPrice = (float)$request->price;
+            $query->where(function ($q) use ($maxPrice) {
+                $q->where(function ($sub) use ($maxPrice) {
+                    $sub->whereNotNull('discounted_price')
+                        ->where('discounted_price', '<=', $maxPrice);
+                })->orWhere(function ($sub) use ($maxPrice) {
+                    $sub->whereNull('discounted_price')
+                        ->where('price', '<=', $maxPrice);
+                });
+            });
+        }
+
+        // Apply Brand Heritage checkbox (in-house brand only)
+        if ($request->filled('in_house')) {
+            $query->where('is_in_house_brand', 1);
+        }
+
+        // Paginate by 12 products per page, appending active query string variables
+        $products = $query->orderByRaw('discount_percentage DESC')
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('frontend.shop_page', compact('categories', 'products'));
     }
 }
