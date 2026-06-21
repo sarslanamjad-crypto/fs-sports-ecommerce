@@ -110,7 +110,7 @@ Route::prefix('api/frontend')->group(function () {
     Route::post('/whatsapp-click', [FrontendApiController::class, 'logWhatsappClick']);
 
     // Auth
-    Route::post('/register', [FrontendApiController::class, 'register']);
+    // Route::post('/register', [FrontendApiController::class, 'register']); // Handled in routes/api.php to avoid 404 issues on Vercel
     Route::post('/login', [FrontendApiController::class, 'login']);
     Route::post('/logout', [FrontendApiController::class, 'logout']);
     Route::get('/user-session', [FrontendApiController::class, 'userSession']);
