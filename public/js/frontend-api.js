@@ -51,6 +51,9 @@ const FrontendAPI = {
             return data;
         } catch (error) {
             console.error(`API Network Error [${endpoint}]:`, error);
+            if (error.response && error.response.status === 401) {
+                return { success: false, message: 'Please Login/Signup first!' };
+            }
             return { success: false, message: 'Network error. Please try again.' };
         }
     },
