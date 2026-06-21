@@ -278,6 +278,7 @@ class FrontendApiController extends Controller
             'user_name' => $user->first_name . ' ' . $user->last_name,
             'user_email' => $user->email
         ]);
+        session()->save();
 
         return response()->json([
             'success' => true,
@@ -349,6 +350,7 @@ class FrontendApiController extends Controller
             'user_name' => $user->first_name . ' ' . $user->last_name,
             'user_email' => $user->email
         ]);
+        session()->save();
 
         return response()->json([
             'success' => true,
