@@ -63,6 +63,10 @@ Route::get('/cart', fn() => view('frontend.cart_checkout'))->name('cart_checkout
 Route::get('/product/{id}', [FrontendController::class, 'productDetails'])->name('products_details.html');
 Route::get('/account', fn() => view('frontend.my_account'))->name('my_account.html');
 Route::get('/login', fn() => view('frontend.login_signup'))->name('login_signup.html');
+Route::get('/clear', function () {
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    return 'Cleared';
+});
 
 
 // Frontend API (under web middleware for session support)
