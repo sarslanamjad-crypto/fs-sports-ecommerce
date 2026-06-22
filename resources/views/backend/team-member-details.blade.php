@@ -5,7 +5,7 @@
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-info"><a class="text-info" href="{{url('/admin')}}">Main Menu</a> | Team Member Details</h6>
-                        <a href="{{url('/admin/team')}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm float-right"><i
+                        <a href="{{url('/admin/team')}}" class="d-inline-block btn btn-sm btn-primary shadow-sm float-right"><i
                         class="fas fa-arrow-left fa-sm text-white-50"></i>Team Members List</a>
                     </div>
                     <div class="card-body">

@@ -67,6 +67,15 @@
 <script>
   let loaderTimeout = null;
 
+  window.addEventListener('pageshow', function (event) {
+    if (event.persisted) {
+      const loaderEl = document.querySelector('#global-loader');
+      if (loaderEl && loaderEl.__x) {
+        loaderEl.__x.$data.loading = false;
+      }
+    }
+  });
+
   function triggerLoader() {
     // Dispatch window event to turn Alpine state to true
     window.dispatchEvent(new CustomEvent('submitting-form'));
